@@ -1,0 +1,14 @@
+ManifestFileVersion: 0
+CRC: 2856258858
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 68b4d00f8c3671e7022edc73cd45216f
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 31d6cfe0d16ae931b73c59d7e0c089c0
+HashAppended: 0
+ClassTypes: []
+Assets:
+- Assets/NeedExportRes/Scenes/loading.unity
+Dependencies: []

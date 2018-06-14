@@ -1,0 +1,20 @@
+
+local util=require 'util'
+xlua.private_accessible(CS.UIPromptPage)
+local log=CS.UnityEngine.Debug.Log
+xlua.hotfix(CS.UIPromptPage,'ClosePage',function(self,data)
+  CS.UIManager.Instance:ShowUI("UIPromptPage", false);
+  log('Close Page')
+end)
+
+util.hotfix_ex(CS.UIPromptPage,'OnShow',function(self,data)
+  self:OnShow(data)
+  CS.UnityEngine.Debug.Log("OnShow Enter");
+  local  o= CS.UnityEngine.GameObject("tttttttttttttttttttttt")
+  o.transform:SetParent(self.transform)
+  o.transform.localPosition=CS.UnityEngine.Vector3.zero
+  o.transform.localScale=CS.UnityEngine.Vector3.one*2
+  local text= o:AddComponent(typeof(CS.UnityEngine.UI.Text))
+  text.text="new object value"
+
+end)

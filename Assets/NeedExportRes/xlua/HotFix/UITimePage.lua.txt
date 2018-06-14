@@ -1,0 +1,18 @@
+
+local util=require 'util'
+xlua.private_accessible(CS.UITimePage)
+
+local  function tt(o)
+ print("Lua----text")
+ end
+util.hotfix_ex(CS.UITimePage,'Reg',function(self)
+ self:Reg()
+ CS.EventHandler.RegisterEvnet('Test', tt)
+end)
+
+xlua.hotfix(CS.UITimePage,'Success',function(self,data)
+  self.isUpFinish=true
+  self:StartCoroutine(self:WinPlay(data))
+  CS.UnityEngine.Debug.Log("data---"..tostring(data))
+  tt()
+end)

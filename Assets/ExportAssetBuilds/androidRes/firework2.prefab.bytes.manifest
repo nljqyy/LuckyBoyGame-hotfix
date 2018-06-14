@@ -1,0 +1,28 @@
+ManifestFileVersion: 0
+CRC: 1075881311
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: a2aa498c3c14f7368445076179a6cba9
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 0605fe76d012b1a951d4b995dc7210fb
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 198
+  Script: {instanceID: 0}
+- Class: 199
+  Script: {instanceID: 0}
+Assets:
+- Assets/NeedExportRes/Effect/Firework2.prefab
+Dependencies: []

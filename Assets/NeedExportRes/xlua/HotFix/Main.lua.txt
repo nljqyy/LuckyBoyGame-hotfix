@@ -1,0 +1,16 @@
+
+
+--需要加载的模块
+local modules=
+{
+     'UIMovieQRCodePage',
+	 'UIPromptPage',
+     'UITimePage',
+}
+
+for i,v in ipairs(modules) do
+
+    if package.loaded[v]==nil then
+	  require(v)
+	end
+end

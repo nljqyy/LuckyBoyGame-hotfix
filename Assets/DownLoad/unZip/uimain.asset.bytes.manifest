@@ -1,0 +1,22 @@
+ManifestFileVersion: 0
+CRC: 556400234
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: a55a93fb31fd5bc13faa54165d43e24e
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 4edf832f412cbe62a561d03005bcba05
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: f486455d2a9a53c49b23ef347c727968, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/NeedExportRes/UIMain.asset
+Dependencies: []

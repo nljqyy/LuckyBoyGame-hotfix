@@ -1,0 +1,13 @@
+
+local util=require 'util'
+local gameobject=CS.UnityEngine.GameObject('CoroutineRunner')
+CS.UnityEngine.Object.DontDestroyOnLoad(gameobject)
+local cs_coroutine_runner=gameobject:AddComponent(typeof(CS.CoroutineRunner))
+
+local function async_yield(yield,callback)
+   cs_coroutine_runner:YiledAndCallback(yield,callback)
+end
+
+return{
+    yield_return=util.async_to_sync(async_yield)
+}

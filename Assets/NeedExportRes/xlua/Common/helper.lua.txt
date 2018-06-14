@@ -1,0 +1,95 @@
+
+--获取字典value
+local function try_get_value(dic,key)
+    local ret ,value = dic:TryGetValue(key)
+	return ret ,value
+end
+
+--new任意类型object
+local function new_object(obj_type)
+    return CS.System.Activator.CreateInstance(obj_type)
+end
+
+--new泛型array
+local function new_array(item_type,item_count)
+    return CS.XLuaHelper.CreateArrayInstance(item_type,item_count)
+end
+
+--new泛型list
+local function new_list(item_type)
+    return CS.XLuaHelper.CreateListInstance(item_type)
+end
+
+--new泛型字典
+local function new_dictionary(key_type,value_type)
+    return CS.XLuaHelper.CreateDictionaryInstance(key_type,value_type)
+end
+
+--new泛型Action
+local function new_action(cs_obj, method, ...)
+    return CS.XLuaHelper.CreateActionDelegate(cs_obj, method, ...)
+end
+
+--cs列表迭代器
+local function list_iter(cs_ilist, index)
+    index=index+1
+	if index<cs_ilist.Count then
+	   return index, cs_ilist[index]
+	end
+end
+
+local function list_ipairs(cs_ilist)
+    return list_iter, cs_ilist, -1
+end
+
+--cs字典迭代器
+local function dictionray_iter(cs_enumerator)
+    if cs_enumerator:MoveNext() then
+	    local current=cs_enumerator.Current
+		return current.Key, current.Value
+    end
+end
+
+local function dictionary_ipairs(cs_dictionary)
+     local cs_enumerator=cs_dictionary:GetEnumerator()
+	 return dictionray_iter, cs_enumerator
+end
+
+
+--list类型构建
+local function get_generic_list_type(item_type)
+      return CS.XLuaHelper.GetGenericListType(item_type)
+end
+
+--dictionary类型获得
+local function get_generic_dictionary_type(key_type, value_type)
+      return CS.XLuaHelper.GetGenericDictionaryType(key_type, value_type)
+end
+
+--action类型获得
+local function get_generic_action_type(...)
+     return  CS.XLuaHelper.GetGenericActionType(...)
+end
+
+
+
+return {
+    --字典获得值
+    try_get_value=try_get_value,
+
+   --new cs对象
+    new_object = new_object,
+	new_array = new_array,
+	new_list = new_list,
+	new_dictionary = new_dictionary,
+	new_action = new_action,
+
+	--cs迭代器
+	list_ipairs=list_ipairs,
+	dictionary_ipairs=dictionary_ipairs,
+
+	-- cs类型
+	get_generic_list_type = get_generic_list_type,
+	get_generic_dictionary_type = get_generic_dictionary_type,
+	get_generic_action_type = get_generic_action_type,
+}
