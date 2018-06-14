@@ -32,5 +32,6 @@ public class Loading : MonoBehaviour {
     {
         LoadAssetMrg.Instance.LoadAsset("main.unity");
         SceneManager.LoadSceneAsync("Main");
+        Debug.Log("ggggg");
     }
 }
