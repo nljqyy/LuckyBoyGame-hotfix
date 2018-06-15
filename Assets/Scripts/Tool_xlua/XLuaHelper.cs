@@ -7,21 +7,6 @@ using System.Reflection;
 
 public static class XLuaHelper
 {
-    [LuaCallCSharp]
-    public static List<Type> LuaCallCSharp = new List<Type>()
-    {
-        typeof(XLuaHelper),
-        typeof(Array),
-        typeof(IList),
-        typeof(IDictionary),
-        typeof(Activator),
-        typeof(Type),
-        typeof(BindingFlags),
-    };
-    [CSharpCallLua]
-    public static List<Type> CSharpCallLua = new List<Type>()
-    { };
-
     //创建array
     public static Array CreateArrayInstance(Type itemType, int itemCount)
     {

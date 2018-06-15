@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using XLua;
+
+[Hotfix]
 
 [RequireComponent(typeof(RawImage))]
-public class UI3DEffect : MonoBehaviour
+public sealed class UI3DEffect : MonoBehaviour
 {
     [SerializeField]
     private GameObject effectPrefab;

@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class EffectMrg
+using XLua;
+
+[Hotfix]
+public sealed class EffectMrg
 {
-    public class EObj
+    public sealed class EObj
     {
         public float time;
         public GameObject e;

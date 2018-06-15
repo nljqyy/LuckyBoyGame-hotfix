@@ -23,7 +23,7 @@ public enum HidePage
 /// <summary>
 /// 注册事件类型
 /// </summary>
-public class EventHandlerType
+public sealed class EventHandlerType
 {
     public const string FishHookCheck = "FishHookCheck";
     public const string UpFinish = "UpFinish";

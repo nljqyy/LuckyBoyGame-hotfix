@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
-
-public sealed class LoadAssetMrg :Singleton<LoadAssetMrg>
+using XLua;
+using System;
+[Hotfix]
+public sealed class LoadAssetMrg :MonoSingleton<LoadAssetMrg>
 {
-    private LoadAssetMrg()
+    private void Awake()
     {
         GetMainfest();
     }
@@ -57,13 +59,16 @@ public sealed class LoadAssetMrg :Singleton<LoadAssetMrg>
         return mainfest.GetDirectDependencies(_assetName+suffixName);
     }
     //根据依赖加载
-    private void LoadDependencies(string _assetName)
+    private void LoadDependencies(string _assetName,bool isAysnc=false)
     {
         string[] deps = GetDirectDependencies(_assetName);
         foreach (var assetname in deps)
         {
             string aName= assetname.Replace(suffixName, "");
-            LoadAsset(aName);
+            if (!isAysnc)
+                LoadAsset(aName);
+            else
+                LoadAssetAsync(aName,null);
         }
     }
     //加载assetbundle
@@ -82,7 +87,25 @@ public sealed class LoadAssetMrg :Singleton<LoadAssetMrg>
         return bd;
     }
 
-
+    public void LoadAssetAsync(string _assetName,Action<Bundle> action)
+    {
+        StartCoroutine(LoadAssetIe(_assetName,action));
+    }
+    private IEnumerator LoadAssetIe(string _assetName, Action<Bundle> action)
+    {
+        if (string.IsNullOrEmpty(_assetName)) yield break;
+        Bundle bd = null;
+        if (!bundles.TryGetValue(_assetName, out bd))
+        {
+            bd = new Bundle(_assetName);
+            yield return bd.GoLoadAsync();
+            bundles.Add(_assetName, bd);
+            LoadDependencies(_assetName,true);
+        }
+        bd.Retain();
+        if (action != null)
+            action(bd);
+    }
     public void Remove(string _assetName)
     {
         if (bundles.ContainsKey(_assetName))
@@ -106,12 +129,13 @@ public sealed class LoadAssetMrg :Singleton<LoadAssetMrg>
     //释放所有资源
     private void ReleaseAllAsset()
     {
-        mainfest = null;
         foreach (var item in bundles)
         {
             ReleaseAsset(item.Key);
         }
         bundles.Clear();
+        mainfest = null;
+        mMainfestBundle.Unload(true);
         AssetBundle.UnloadAllAssetBundles(true);
     }
 }

@@ -4,7 +4,9 @@ using UnityEngine;
 using System;
 using DG.Tweening;
 
-public sealed class UIManager:Singleton<UIManager>
+using XLua;
+[Hotfix]
+public sealed class UIManager : Singleton<UIManager>
 {
     private Transform normalUI;
     private Transform hideUI;
@@ -24,25 +26,26 @@ public sealed class UIManager:Singleton<UIManager>
     }
     private Dictionary<string, UIDataBase> dicDlg = new Dictionary<string, UIDataBase>();
 
-    private UIDataBase GetDigLog(string dlgName)
+    private UIDataBase GetDigLog(string dlgName, out bool isHas)
     {
+        isHas = false;
         if (string.IsNullOrEmpty(dlgName))
             return null;
         UIDataBase dlg = null;
         GameObject uiRoot = null;
-        bool isHas= dicDlg.TryGetValue(dlgName, out dlg);
-        if (isHas)
+        if (dicDlg.TryGetValue(dlgName, out dlg))
         {
             uiRoot = dlg.gameObject;
+            isHas = true;
         }
         else
         {
-           dlg= RegisterDlgScripte(dlgName, out uiRoot);
+            dlg = RegisterDlgScripte(dlgName, out uiRoot);
         }
-        SetUIRootParent(uiRoot,dlg.ShowPos);
+        SetUIRootParent(uiRoot, dlg.ShowPos);
         return dlg;
     }
-    private void SetUIRootParent(GameObject uiRoot,UIShowPos type)
+    private void SetUIRootParent(GameObject uiRoot, UIShowPos type)
     {
         Transform Parent = null;
         if (type == UIShowPos.Normal)
@@ -51,21 +54,14 @@ public sealed class UIManager:Singleton<UIManager>
             Parent = tiptopUI;
         else
             Parent = hideUI;
-        uiRoot.transform.SetParent( Parent);
+        uiRoot.transform.SetParent(Parent);
         uiRoot.transform.localPosition = Vector3.zero;
         uiRoot.transform.localScale = Vector3.one;
         uiRoot.transform.localRotation = Quaternion.identity;
     }
 
-    private void SaveUIRoot(string dlgName,UIDataBase dlg)
-    {
-        if (dlg!=null)
-            dicDlg.Add(dlgName, dlg);
-        else
-            GameObject.Destroy(dlg.gameObject);
-    }
     //需要手动注册脚本
-    private UIDataBase RegisterDlgScripte(string dlgName,out GameObject uiRoot)
+    private UIDataBase RegisterDlgScripte(string dlgName, out GameObject uiRoot)
     {
         UIDataBase dlg = null;
         uiRoot = null;
@@ -74,17 +70,30 @@ public sealed class UIManager:Singleton<UIManager>
             uiRoot = SetRootPro(dlgName);
             switch (dlgName)
             {
-                case UIMovePage.NAME:dlg = uiRoot.AddComponent<UIMovePage>();break;
-                case UITimePage.NAME:dlg = uiRoot.AddComponent<UITimePage>();break;
-                case UIPromptPage.NAME:dlg = uiRoot.AddComponent<UIPromptPage>();break;
-                case UIMovieQRCodePage.NAME: dlg = uiRoot.AddComponent<UIMovieQRCodePage>(); break;
-                case UIMessagePage.NAME:dlg = uiRoot.AddComponent<UIMessagePage>();break;
+                case UIMovePage.NAME:
+                    dlg = uiRoot.AddComponent<UIMovePage>();
+                    break;
+                case UITimePage.NAME:
+                    dlg = uiRoot.AddComponent<UITimePage>();
+                    break;
+                case UIPromptPage.NAME:
+                    dlg = uiRoot.AddComponent<UIPromptPage>();
+                    break;
+                case UIMovieQRCodePage.NAME:
+                    dlg = uiRoot.AddComponent<UIMovieQRCodePage>();
+                    break;
+                case UIMessagePage.NAME:
+                    dlg = uiRoot.AddComponent<UIMessagePage>();
+                    break;
             }
-            SaveUIRoot(dlgName,dlg);
+            if (dlg != null)
+                dicDlg.Add(dlgName, dlg);
+            else
+                GameObject.Destroy(dlg.gameObject);
         }
         return dlg;
     }
-   
+
 
     private GameObject SetRootPro(string dlgName)
     {
@@ -93,18 +102,17 @@ public sealed class UIManager:Singleton<UIManager>
         uiRoot.layer = LayerMask.NameToLayer("UI");
         return uiRoot;
     }
-    public void ShowUI(string dlgName,bool isShow,object data=null, Action<GameObject> act=null)
+    public void ShowUI(string dlgName, bool isShow, object data = null, Action<GameObject> act = null)
     {
         UIDataBase dlg;
-        dlg= GetDigLog(dlgName);
+        bool isHas;
+        dlg = GetDigLog(dlgName, out isHas);
         if (dlg)
         {
-            if (isShow)
-            {
-                dlg.OnOpen();
+            dlg.Data = data;
+            if (isHas && isShow)
                 dlg.OnShow(data);
-            }
-            else
+            else if (!isShow)
             {
                 if (dlg.hidePage == HidePage.Hide)
                 {
@@ -124,6 +132,7 @@ public sealed class UIManager:Singleton<UIManager>
                 act(dlg.gameObject);
         }
     }
+
 
     public void Clear()
     {

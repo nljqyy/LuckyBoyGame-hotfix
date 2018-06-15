@@ -6,8 +6,10 @@ using ICSharpCode.SharpZipLib;
 using ICSharpCode.SharpZipLib.Zip;
 using ICSharpCode.SharpZipLib.Checksums;
 using System;
+using XLua;
 
-public class Zip
+[Hotfix]
+public sealed class Zip
 {
 
     public static void CreateZip(string sourceFilePath, string zipFilePath)
@@ -74,6 +76,8 @@ public class Zip
             {
                 try
                 {
+                    if (File.Exists(filePath))
+                        File.Delete(filePath);
                     FileStream streamWriter = File.Create(filePath);
                     int size = 2048;
                     byte[] data = new byte[size];

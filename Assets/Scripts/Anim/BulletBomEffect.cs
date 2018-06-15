@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class BulletBomEffect {
+using XLua;
+[Hotfix]
+public sealed class BulletBomEffect {
 
     public bool isShoot;
     public GameObject bullet;

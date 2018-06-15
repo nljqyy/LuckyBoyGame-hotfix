@@ -2,9 +2,10 @@
 local util=require 'util'
 xlua.private_accessible(CS.UIPromptPage)
 local log=CS.UnityEngine.Debug.Log
+
 xlua.hotfix(CS.UIPromptPage,'ClosePage',function(self,data)
-  CS.UIManager.Instance:ShowUI("UIPromptPage", false);
-  log('Close Page')
+  log("Close Page---"..CS.UIPromptPage.NAME)
+  CS.UIManager.Instance:ShowUI("UIPromptPage.prefab", false);
 end)
 
 util.hotfix_ex(CS.UIPromptPage,'OnShow',function(self,data)

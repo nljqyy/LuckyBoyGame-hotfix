@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 using UnityEngine;
+using XLua;
 
-public class CommTool
+[Hotfix]
+public sealed class CommTool
 {
     public static GameObject FindObjForName(GameObject uiRoot,string name)
     {

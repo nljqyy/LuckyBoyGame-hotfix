@@ -34,7 +34,7 @@ public sealed class UIMovieQRCodePage : UIDataBase
     private Animator animator;
     private Image xiaoP;
     private List<ExcelTableEntity> elist;
-    public override void Init()
+    protected override void Init()
     {
         base.Init();
         qrCode = CommTool.FindObjForName(gameObject, "QR-code");

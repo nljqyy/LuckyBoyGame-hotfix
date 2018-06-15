@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using XLua;
-
-public class XLuaManager : MonoSingleton<XLuaManager>
+[Hotfix]
+public sealed class XLuaManager : MonoSingleton<XLuaManager>
 {
     LuaEnv luaEnv;
     // Use this for initialization

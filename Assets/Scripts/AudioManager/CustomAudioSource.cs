@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using XLua;
 
-public class CustomAudioSource : MonoBehaviour
+[Hotfix]
+public sealed class CustomAudioSource : MonoBehaviour
 {
     private IEnumerator ie = null;
     private AudioSource continuousAds = null;

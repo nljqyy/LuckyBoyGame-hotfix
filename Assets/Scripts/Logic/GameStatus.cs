@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using XLua;
 
-public class GameStatus
+[Hotfix]
+public sealed class GameStatus
 {
     public GameRunStatus runStatus;
     public int currentGameNumber;

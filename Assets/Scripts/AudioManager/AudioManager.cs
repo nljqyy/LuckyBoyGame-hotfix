@@ -4,7 +4,9 @@ using UnityEngine;
 using System;
 using UnityEngine.UI;
 using UnityEngine.Video;
+using XLua;
 
+[Hotfix]
 public sealed class AudioManager:Singleton<AudioManager>
 {
     private string mp3 = ".mp3";

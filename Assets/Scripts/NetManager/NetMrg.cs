@@ -5,18 +5,21 @@ using BestHTTP;
 using System;
 using System.IO;
 using System.Text;
+using XLua;
 
+[Hotfix]
 public sealed class NetMrg : MonoSingleton<NetMrg>
 {
     private BestHttpImpl httpImpl;
     private const string url = "http://192.168.15.162:4050";
-    private const string zip = "Zip.zip";
     private const string version = "version.txt";
+    private const string versionList = "versionList.txt";
     private HTTPMethods method = HTTPMethods.Post;
     private Action finish = null;
     private Action<float> downZip = null;
     private string tempPath = "";
-    //private string per
+    private Version local_version;
+    private ulong downSize;
 
     // Use this for initialization
     void Awake()
@@ -25,6 +28,7 @@ public sealed class NetMrg : MonoSingleton<NetMrg>
         httpImpl = new BestHttpImpl();
         httpImpl.SetHttpParams();
         httpImpl.AddHead("content-type", "application/json");
+        PlayerPrefs.DeleteKey("DownloadLength");
     }
 
     public void RequestVersion(Action<float> down=null, Action callback = null)
@@ -32,12 +36,16 @@ public sealed class NetMrg : MonoSingleton<NetMrg>
         finish = callback;
         downZip = down;
         string httpUrl = string.Format("{0}/{1}", url, version);
-
         SendRequest(httpUrl, false, SaveVesionToLocal);
     }
-    private void RequestZip()
+    private void RequestVersionList()
     {
-        string httpUrl = string.Format("{0}/{1}", url, zip);
+        string httpUrl = string.Format("{0}/{1}", url, versionList);
+        SendRequest(httpUrl, false, SaveVersionList);
+    }
+    private void RequestZip(string version)
+    {
+        string httpUrl = string.Format("{0}/{1}.zip", url, version);
         SendRequest(httpUrl, true, SaveZipToLocal);
     }
 
@@ -63,34 +71,54 @@ public sealed class NetMrg : MonoSingleton<NetMrg>
     private void SaveVesionToLocal(HTTPResponse response)
     {
         Debug.Log("版本号获得成功--" + response.DataAsText);
-        string savePath = PathHelp.GetDownLoadPath();
-        if (!Directory.Exists(savePath))
+        bool isUpdate= VersionController.ReadLocalVersion(response.DataAsText);
+        if (isUpdate)//需要更新
         {
-            Directory.CreateDirectory(savePath);
-        }
-        string version_n = response.DataAsText;
-        string version_Path = Path.Combine(savePath, version);
-        if (File.Exists(version_Path))
-        {
-            string version_o = File.ReadAllText(version_Path);
-            if (Convert.ToInt32(version_n) > Convert.ToInt32(version_o))
-            {
-                File.Delete(version_Path);
-                SaveText(version_Path, version_n);
-                RequestZip();
-            }
-            else
-            {
-                if (finish != null)
-                    finish();
-            }
+            RequestVersionList();
         }
         else
         {
-            SaveText(version_Path, version_n);
-            RequestZip();
+            if (finish != null)
+                 finish();
+        }
+        //string savePath = PathHelp.GetDownLoadPath();
+        //if (!Directory.Exists(savePath))
+        //{
+        //    Directory.CreateDirectory(savePath);
+        //}
+        //string version_n = response.DataAsText;
+        //string version_Path = Path.Combine(savePath, version);
+        //if (File.Exists(version_Path))
+        //{
+        //    string version_o = File.ReadAllText(version_Path);
+        //    if (Convert.ToInt32(version_n) > Convert.ToInt32(version_o))
+        //    {
+        //        File.Delete(version_Path);
+        //        SaveText(version_Path, version_n);
+        //        RequestZip();
+        //    }
+        //    else
+        //    {
+        //        if (finish != null)
+        //            finish();
+        //    }
+        //}
+        //else
+        //{
+        //    SaveText(version_Path, version_n);
+        //    RequestZip();
+        //}
+    }
+
+    private void SaveVersionList(HTTPResponse response)
+    {
+        int nextIndex= VersionController.ReadVersionList(response.DataAsText,out downSize);
+        for (int i = nextIndex; i < VersionController.vsList.Count; i++)//
+        {
+            RequestZip(VersionController.vsList[i].Content);
         }
     }
+
 
     private void SaveZipToLocal(HTTPResponse response)
     {
@@ -98,7 +126,6 @@ public sealed class NetMrg : MonoSingleton<NetMrg>
         if (response.IsStreamingFinished)
         {
             Debug.Log("zip资源获得成功");
-            PlayerPrefs.DeleteKey("DownloadLength");
             string newPath = PathHelp.GetDownLoadPath() + "data.zip";
             if (File.Exists(tempPath))
             {
@@ -126,7 +153,8 @@ public sealed class NetMrg : MonoSingleton<NetMrg>
                 }
             }
             PlayerPrefs.Save();
-            float  progress = PlayerPrefs.GetInt("DownloadProgress") / (float)PlayerPrefs.GetInt("DownloadLength");
+            // float  progress = PlayerPrefs.GetInt("DownloadProgress") / (float)PlayerPrefs.GetInt("DownloadLength");
+            float progress = PlayerPrefs.GetInt("DownloadProgress") / (float)downSize;
             if (downZip != null)
                 downZip(progress);
         }

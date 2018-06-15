@@ -29,7 +29,7 @@ public sealed class UIPromptPage : UIDataBase {
     private GameObject failDrop;
     private GameObject gameEnd;
     private GameObject hasboy;
-    public override void Init()
+    protected override void Init()
     {
         base.Init();
         success = CommTool.FindObjForName(gameObject, "Success");

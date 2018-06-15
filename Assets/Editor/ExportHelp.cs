@@ -16,13 +16,13 @@ public sealed class ExportHelp
     /// </summary>
     /// <param name="_builds">打包的资源</param>
     /// <param name="updateList">变更的资源</param>
-   public static void GoExport(AssetBundleBuild[] _builds, List<string> updateList)
+    public static void GoExport(AssetBundleBuild[] _builds, List<string> updateList)
     {
         if (_builds == null || _builds.Length == 0) return;
         string exportPath = PathHelp.GetExportPath();
         string assetPath = Path.Combine(exportPath, "androidRes");
         string zipPath = Path.Combine(exportPath, "Zip.zip");
-        string version = Path.Combine(exportPath, "Version.txt");
+        string version = Path.Combine(exportPath, "version.txt");
         if (Directory.Exists(assetPath))
         {
             if (File.Exists(version))
@@ -58,7 +58,7 @@ public sealed class ExportHelp
     /// </summary>
     /// <param name="needExportResPath">需要打包的路径</param>
     /// <param name="fs">需要打包的资源</param>
-    public static List<string> MD5Comparison(string needExportResPath,List<FileInfo> fs)
+    public static List<string> MD5Comparison(string needExportResPath, List<FileInfo> fs)
     {
         string currentPath = Directory.GetCurrentDirectory() + "\\";
         List<string> needExportList = new List<string>();
@@ -129,7 +129,7 @@ public sealed class ExportHelp
     /// </summary>
     /// <param name="filepath"></param>
     /// <returns></returns>
-    public  static string GetAssetsGuid(string filepath)
+    public static string GetAssetsGuid(string filepath)
     {
         string md5str = "";
         using (FileStream fs = File.OpenRead(filepath))
@@ -144,7 +144,7 @@ public sealed class ExportHelp
     /// 获得更新的资源
     /// </summary>
     /// <param name="assetPath">资源路径</param>
-   public  static string GetUpdateRes(string assetPath,List<string> updatelist)
+    public static string GetUpdateRes(string assetPath, List<string> updatelist)
     {
         string dir = "androidRes";//manifest文件
         string UpdateRes = Path.Combine(PathHelp.GetExportPath(), "UpdateRes");
@@ -168,28 +168,27 @@ public sealed class ExportHelp
                 }
             }
         }
-        updatelist.ForEach(o=>Debug.Log("资源更新---"+o));
+        updatelist.ForEach(o => Debug.Log("资源更新---" + o));
         return UpdateRes;
     }
 
     public static void StartUpExe()
     {
-        System.Diagnostics.Process[] ps= System.Diagnostics.Process.GetProcessesByName("HttpServer");
+        System.Diagnostics.Process[] ps = System.Diagnostics.Process.GetProcessesByName("HttpServer");
         if (ps.Length > 0)
-            ps[0].Kill();
-
-        string[] files=  Directory.GetFiles(@"D:\Res");
-        foreach (var item in files)
         {
-            File.Delete(item);
+            ps[0].Kill();
         }
-        
+        if (Directory.Exists("D:/Res"))
+            Directory.Delete("D:/Res", true);
+        Directory.CreateDirectory("D:/Res");
+
         string version = Path.Combine(PathHelp.GetExportPath(), "version.txt");
         string zip = Path.Combine(PathHelp.GetExportPath(), "Zip.zip");
         string server_version = @"D:\Res\version.txt";
         string server_zip = @"D:\Res\Zip.zip";
 
-        File.Copy(version,server_version);
+        File.Copy(version, server_version);
         File.Copy(zip, server_zip);
         Debug.Log("启动服务器啦");
         System.Diagnostics.Process.Start(@"E:\XueXi\c#搭建http服务器\HttpServer-master\HttpServer-master\HTTPServer\HTTPServer\bin\Debug\HttpServer.exe");

@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using XLua;
 using System;
+using System.Reflection;
 
-public static class GenConfig  {
+public static class GenConfig
+{
 
     //lua中要使用到C#库的配置，比如C#标准库，或者Unity API，第三方库等。
     [LuaCallCSharp]
@@ -44,7 +46,23 @@ public static class GenConfig  {
 		// UILogic
         typeof(UITimePage),
         typeof(UIPromptPage),
+        typeof(UIManager),
+        typeof(UIMovePage),
+        typeof(UIMovieQRCodePage),
+        typeof(UIMessagePage),
         typeof(CommonMono),
+        typeof(CoroutineRuner),
+        typeof(XLuaHelper),
+        typeof(Array),
+        typeof(IList),
+        typeof(IDictionary),
+        typeof(Activator),
+        typeof(Type),
+        typeof(BindingFlags),
+        typeof(AndroidJavaObject),
+        typeof(SDKManager),
+        //typeof(Singleton<UIManager>),
+        
 		// game logic
 		//typeof(Battle.CtlBattle),
   //      typeof(ResourceMgr),

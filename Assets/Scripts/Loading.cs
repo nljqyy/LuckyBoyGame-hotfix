@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-
+using XLua;
+[Hotfix]
 public class Loading : MonoBehaviour {
 
     [SerializeField]
@@ -14,6 +15,7 @@ public class Loading : MonoBehaviour {
     private GameObject mask;
     private void Awake()
     {
+        VersionController.ReadVersion();
         mask.SetActive(false);
         slider.gameObject.SetActive(false);
         NetMrg.Instance.RequestVersion(DownZip,EnterGame);
@@ -30,8 +32,6 @@ public class Loading : MonoBehaviour {
     }
     private void EnterGame()
     {
-        LoadAssetMrg.Instance.LoadAsset("main.unity");
-        SceneManager.LoadSceneAsync("Main");
-        Debug.Log("ggggg");
+        LoadAssetMrg.Instance.LoadAssetAsync("main.unity",ab=> SceneManager.LoadSceneAsync("Main"));
     }
 }

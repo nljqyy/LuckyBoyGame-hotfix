@@ -35,8 +35,8 @@ public sealed class UITimePage : UIDataBase
     private Action aciton = null;
     private List<ExcelTableEntity> elist;
     private int index = 0;
-  
-    public override void Init()
+
+    protected override void Init()
     {
         base.Init();
         time_1 = CommTool.GetCompentCustom<Image>(gameObject, "time_1");
@@ -47,16 +47,11 @@ public sealed class UITimePage : UIDataBase
         //elist = SDKManager.Instance.GetVoiceForType(VoiceType.Five);
     }
 
-    public override void OnOpen()
-    {
-        base.OnOpen();
-        //SetQuXImg();
-    }
-
 
     public override void OnShow(object data)
     {
         base.OnShow(data);
+        //SetQuXImg();
         aciton = NormalUpdate;
         OnInit();
         StartCoroutine(TimeUpdate());

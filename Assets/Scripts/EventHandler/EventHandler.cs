@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Linq;
-public class EventHandler
+using XLua;
+
+[Hotfix]
+public sealed class EventHandler
 {
     private static Dictionary<string, Action<object>> dic = new Dictionary<string, Action<object>>();
     public static void RegisterEvnet(string type, Action<object> action)

@@ -24,7 +24,7 @@ public sealed class UIMessagePage : UIDataBase
     }
 
     private Text msg;
-    public override void Init()
+    protected override void Init()
     {
         base.Init();
         msg = CommTool.GetCompentCustom<Text>(gameObject, "msg");

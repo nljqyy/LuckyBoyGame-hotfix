@@ -17,45 +17,45 @@ public class EditorTool
     const string atlas_mainPath = "Assets/NeedExportRes/UIMain.asset";
     const string atlas_qrCodePath = "Assets/NeedExportRes/UIQRCode.asset";
 
-    #region  设置animator 动画片段播放速度
-    static string path = "Assets/Animation/fishhook.controller";
-    static AnimatorController animator = AssetDatabase.LoadAssetAtPath(path, typeof(AnimatorController)) as AnimatorController;
+    //#region  设置animator 动画片段播放速度
+    //static string path = "Assets/Animation/fishhook.controller";
+    //static AnimatorController animator = AssetDatabase.LoadAssetAtPath(path, typeof(AnimatorController)) as AnimatorController;
 
-    [MenuItem("Tools/ChangeAnimSpeed/fishhook_down")]
-    static void fishhook_down()
-    {
-        SetAniamtionSpeed(animator, AnimationName.down, 0.5f);
-        SetAniamtionSpeed(animator, AnimationName.up, 0.5f);
-    }
-    [MenuItem("Tools/ChangeAnimSpeed/fishhook_get")]
-    static void fishhook_get()
-    {
-        SetAniamtionSpeed(animator, AnimationName.catchs, 1f);
-        SetAniamtionSpeed(animator, AnimationName.release, 2f);
-    }
+    //[MenuItem("Tools/ChangeAnimSpeed/fishhook_down")]
+    //static void fishhook_down()
+    //{
+    //    SetAniamtionSpeed(animator, AnimationName.down, 0.5f);
+    //    SetAniamtionSpeed(animator, AnimationName.up, 0.5f);
+    //}
+    //[MenuItem("Tools/ChangeAnimSpeed/fishhook_get")]
+    //static void fishhook_get()
+    //{
+    //    SetAniamtionSpeed(animator, AnimationName.catchs, 1f);
+    //    SetAniamtionSpeed(animator, AnimationName.release, 2f);
+    //}
 
-    static void SetAniamtionSpeed(AnimatorController ac, AnimationName name, float speed)
-    {
-        //AnimatorController ac = animator.runtimeAnimatorController as UnityEditor.Animations.AnimatorController;
-        AnimatorControllerLayer[] layers = ac.layers;
-        AnimatorStateMachine state = layers[0].stateMachine;
-        ChildAnimatorState[] sts = state.states;
-        for (int i = 0; i < sts.Length; i++)
-        {
-            if (name.ToString() == sts[i].state.name)
-            {
-                sts[i].state.speed = speed;
-                Debug.Log(name + "------修改成功");
-                break;
-            }
-        }
-    }
+    //static void SetAniamtionSpeed(AnimatorController ac, AnimationName name, float speed)
+    //{
+    //    //AnimatorController ac = animator.runtimeAnimatorController as UnityEditor.Animations.AnimatorController;
+    //    AnimatorControllerLayer[] layers = ac.layers;
+    //    AnimatorStateMachine state = layers[0].stateMachine;
+    //    ChildAnimatorState[] sts = state.states;
+    //    for (int i = 0; i < sts.Length; i++)
+    //    {
+    //        if (name.ToString() == sts[i].state.name)
+    //        {
+    //            sts[i].state.speed = speed;
+    //            Debug.Log(name + "------修改成功");
+    //            break;
+    //        }
+    //    }
+    //}
 
-    #endregion
+    //#endregion
 
     #region 制作语音数据资源 图集资源
     //打包语音数据包
-    [MenuItem("Tools/BuildAssetScripteObj_Audio")]
+    [MenuItem("Tools/ScriptableObject/BuildAsset_Audio")]
     static void BuildAssetBundlesExcell()
     {
         ExcelScriptObj es = ScriptableObject.CreateInstance<ExcelScriptObj>();
@@ -71,7 +71,7 @@ public class EditorTool
         AssetDatabase.Refresh();
     }
     ////打包图集
-    [MenuItem("Tools/BuildAssetScripteObj_UIAtlas")]
+    [MenuItem("Tools/ScriptableObject/BuildAsset_UIAtlas")]
     static void BuildAssetGameStaus()
     {
         string atlasPath = "UIAtlas/";
@@ -98,7 +98,7 @@ public class EditorTool
     {
         string android_project_path = @"C:\Users\jhz\Desktop\UnityBao";
         BuildTarget target = BuildTarget.Android;
-        string[] buildScences = new[] { "Assets/Scenes/loading.unity", "Assets/Scenes/Main.unity" };
+        string[] buildScences = new[] { "Assets/Scenes/loading.unity"};
         BuildPipeline.BuildPlayer(buildScences, android_project_path, target,
             BuildOptions.AcceptExternalModificationsToPlayer);
     }

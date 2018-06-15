@@ -45,7 +45,7 @@ public sealed class UIMovePage : UIDataBase
     private float[] speeds = new float[] { 400, 600, 800, 1000 };
     #endregion
 
-    public override void Init()
+    protected override void Init()
     {
         base.Init();
         modelWheel = CommTool.FindObjForName(gameObject, "wheel_img");
@@ -55,9 +55,9 @@ public sealed class UIMovePage : UIDataBase
         Reg();
     }
 
-    public override void OnOpen()
+    public override void OnShow(object data)
     {
-        base.OnOpen();
+        base.OnShow(data);
         CreateGameObject();
     }
 

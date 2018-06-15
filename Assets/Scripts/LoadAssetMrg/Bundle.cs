@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using XLua;
 
+[Hotfix]
 public sealed class Bundle  {
 
     private const string suffixName = ".bytes";
@@ -72,5 +74,32 @@ public sealed class Bundle  {
         else
             Debug.Log("未发现assetbundle---" + assetPath);
 
+    }
+
+    public IEnumerator GoLoadAsync()
+    {
+        string assetPath = PathHelp.GetDownLoadPath() + PathHelp.unZip + CombinSuffixName();
+        Debug.Log("异步加载assetbundle---" + assetPath);
+        AssetBundleCreateRequest abrequest = AssetBundle.LoadFromFileAsync(assetPath);
+        yield return abrequest;
+        if (abrequest.isDone)
+        {
+            mAssetBundle = abrequest.assetBundle;
+            if (mAssetBundle != null)
+            {
+                isLoaded = true;
+                if (mAssetBundle.isStreamedSceneAssetBundle)
+                    mAsset = mAssetBundle.mainAsset;
+                else
+                {
+                    mAsset = mAssetBundle.LoadAsset(mAssetName);
+                    mAssetBundle.Unload(false);
+                    mAssetBundle = null;
+                }
+            }
+            else
+                Debug.Log("未发现assetbundle---" + assetPath);
+        }
+       
     }
 }
