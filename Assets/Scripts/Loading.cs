@@ -15,7 +15,6 @@ public class Loading : MonoBehaviour {
     private GameObject mask;
     private void Awake()
     {
-        VersionController.ReadVersion();
         mask.SetActive(false);
         slider.gameObject.SetActive(false);
         NetMrg.Instance.RequestVersion(DownZip,EnterGame);
@@ -28,7 +27,7 @@ public class Loading : MonoBehaviour {
         if (!slider.gameObject.activeSelf)
             slider.gameObject.SetActive(true);
         slider.value = process;
-        downProcess.text =System.Math.Ceiling(process * 100).ToString();
+        downProcess.text =System.Math.Floor(process * 100).ToString();
     }
     private void EnterGame()
     {

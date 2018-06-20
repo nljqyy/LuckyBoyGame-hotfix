@@ -18,37 +18,57 @@ public sealed class NetMrg : MonoSingleton<NetMrg>
     private Action finish = null;
     private Action<float> downZip = null;
     private string tempPath = "";
-    private Version local_version;
-    private ulong downSize;
+    private ulong downSize;//文件总大小
+    private int currentVersionIndex = 0;//版本索引
+    private string version_Path = "";
 
     // Use this for initialization
     void Awake()
     {
         tempPath = Path.Combine(PathHelp.GetDownLoadPath(), "TempRes.temp");
+        if (File.Exists(tempPath))
+            File.Delete(tempPath);
         httpImpl = new BestHttpImpl();
         httpImpl.SetHttpParams();
         httpImpl.AddHead("content-type", "application/json");
-        PlayerPrefs.DeleteKey("DownloadLength");
+        PlayerPrefs.SetInt("DownloadProgress", 0);
     }
-
-    public void RequestVersion(Action<float> down=null, Action callback = null)
+    /// <summary>
+    /// 请求版本号
+    /// </summary>
+    /// <param name="down">下载进度委托</param>
+    /// <param name="callback">下载完成委托</param>
+    public void RequestVersion(Action<float> down = null, Action callback = null)
     {
-        finish = callback;
         downZip = down;
+        finish = callback;
         string httpUrl = string.Format("{0}/{1}", url, version);
         SendRequest(httpUrl, false, SaveVesionToLocal);
     }
+    /// <summary>
+    /// 请求版本列表
+    /// </summary>
     private void RequestVersionList()
     {
         string httpUrl = string.Format("{0}/{1}", url, versionList);
         SendRequest(httpUrl, false, SaveVersionList);
     }
+    /// <summary>
+    /// 请求压缩包
+    /// </summary>
+    /// <param name="version">版本号</param>
     private void RequestZip(string version)
     {
+        Debug.Log("请求版本-----" + version);
         string httpUrl = string.Format("{0}/{1}.zip", url, version);
         SendRequest(httpUrl, true, SaveZipToLocal);
     }
-
+    /// <summary>
+    /// 发送请求
+    /// </summary>
+    /// <param name="httpUrl"></param>
+    /// <param name="isOpenStram">是否打开多次回调模式</param>
+    /// <param name="action">响应</param>
     private void SendRequest(string httpUrl, bool isOpenStram, Action<HTTPResponse> action)
     {
         Debug.Log("开始连接服务器---" + httpUrl);
@@ -63,63 +83,42 @@ public sealed class NetMrg : MonoSingleton<NetMrg>
         }
         else if (method == HTTPMethods.Post)
         {
-            httpImpl.Post(httpUrl, requestParams, isOpenStram,action);
+            httpImpl.Post(httpUrl, requestParams, isOpenStram, action);
         }
     }
 
 
     private void SaveVesionToLocal(HTTPResponse response)
     {
+        string savePath = PathHelp.GetDownLoadPath();
+        if (!Directory.Exists(savePath))
+            Directory.CreateDirectory(savePath);
+        version_Path = Path.Combine(savePath, version);
         Debug.Log("版本号获得成功--" + response.DataAsText);
-        bool isUpdate= VersionController.ReadLocalVersion(response.DataAsText);
+        bool isUpdate = VersionController.ReadLocalVersion(response.DataAsText,version_Path);
         if (isUpdate)//需要更新
         {
             RequestVersionList();
         }
         else
         {
+            Debug.Log("已是最新版本不需更新");
             if (finish != null)
-                 finish();
+                finish();
         }
-        //string savePath = PathHelp.GetDownLoadPath();
-        //if (!Directory.Exists(savePath))
-        //{
-        //    Directory.CreateDirectory(savePath);
-        //}
-        //string version_n = response.DataAsText;
-        //string version_Path = Path.Combine(savePath, version);
-        //if (File.Exists(version_Path))
-        //{
-        //    string version_o = File.ReadAllText(version_Path);
-        //    if (Convert.ToInt32(version_n) > Convert.ToInt32(version_o))
-        //    {
-        //        File.Delete(version_Path);
-        //        SaveText(version_Path, version_n);
-        //        RequestZip();
-        //    }
-        //    else
-        //    {
-        //        if (finish != null)
-        //            finish();
-        //    }
-        //}
-        //else
-        //{
-        //    SaveText(version_Path, version_n);
-        //    RequestZip();
-        //}
     }
 
     private void SaveVersionList(HTTPResponse response)
     {
-        int nextIndex= VersionController.ReadVersionList(response.DataAsText,out downSize);
-        for (int i = nextIndex; i < VersionController.vsList.Count; i++)//
-        {
-            RequestZip(VersionController.vsList[i].Content);
-        }
+        VersionController.ReadVersionList(response.DataAsText, out downSize);
+        currentVersionIndex = -1;
+        RequestZipNext();
     }
 
-
+    /// <summary>
+    /// 保存下载的数据到本地
+    /// </summary>
+    /// <param name="response"></param>
     private void SaveZipToLocal(HTTPResponse response)
     {
         ProcessFragments(response.GetStreamedFragments());
@@ -134,10 +133,33 @@ public sealed class NetMrg : MonoSingleton<NetMrg>
                     File.Delete(newPath);
                 }
                 File.Move(tempPath, newPath);
+                File.Delete(tempPath);
             }
-            StartCoroutine(Zip.UnZip(newPath, PathHelp.GetDownLoadPath()+PathHelp.unZip, finish));
+            Zip.UnZip(newPath, PathHelp.GetDownLoadPath() + PathHelp.unZip);
+            Debug.Log("解压完成");
+            RequestZipNext();
         }
     }
+    /// <summary>
+    /// 请求下个版本
+    /// </summary>
+    private void RequestZipNext()
+    {
+        if (currentVersionIndex >= 0)
+        {
+            File.WriteAllText(version_Path, VersionController.vsList[currentVersionIndex].Content);//保存版本号到本地
+        }
+        if (++currentVersionIndex < VersionController.vsList.Count)//请求下一个版本
+        {
+            RequestZip(VersionController.vsList[currentVersionIndex].Content);
+        }
+        else
+        {
+            if (finish != null)
+                finish();
+        }
+    }
+
     //下载进度
     private void ProcessFragments(List<byte[]> fragments)
     {
@@ -155,16 +177,9 @@ public sealed class NetMrg : MonoSingleton<NetMrg>
             PlayerPrefs.Save();
             // float  progress = PlayerPrefs.GetInt("DownloadProgress") / (float)PlayerPrefs.GetInt("DownloadLength");
             float progress = PlayerPrefs.GetInt("DownloadProgress") / (float)downSize;
-            if (downZip != null)
+            if (downZip != null && progress < 99)
                 downZip(progress);
         }
     }
-    private void SaveText(string textPath, string text)
-    {
-        byte[] bys = Encoding.UTF8.GetBytes(text);
-        FileStream stream = File.Create(textPath);
-        stream.Write(bys, 0, bys.Length);
-        stream.Close();
-        stream.Dispose();
-    }
+    
 }

@@ -1,0 +1,9 @@
+local util=require 'util'
+local dotween=CS.DG.Tweening
+xlua.private_accessible(CS.Anim)
+
+util.hotfix_ex(CS.Anim,'GetTween',function(self)
+self:GetTween()
+self.catchMoveTween=self.transform:DOLocalMoveX(180, 2):SetEase(dotween.Ease.Linear):SetLoops(-1,dotween.LoopType.Yoyo):Pause():SetAutoKill(false);
+CS.UnityEngine.Debug.Log("GetTween Success");
+end)

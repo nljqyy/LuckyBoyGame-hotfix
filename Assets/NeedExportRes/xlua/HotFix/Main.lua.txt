@@ -6,6 +6,7 @@ local modules=
      'UIMovieQRCodePage',
 	 'UIPromptPage',
      'UITimePage',
+	 'Anim',
 }
 
 for i,v in ipairs(modules) do

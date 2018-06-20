@@ -12,10 +12,8 @@ public sealed class UIManager : Singleton<UIManager>
     private Transform hideUI;
     private Transform tiptopUI;
     private GameObject canves;
-    private UIManager() { }
-    protected override void StartUp()
+    private UIManager()
     {
-        base.StartUp();
         canves = GameObject.Find("UICanvas");
         if (canves)
         {

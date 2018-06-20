@@ -32,17 +32,9 @@ public abstract class Singleton<T> where T : class
             {
                 Singleton<T>.instance=(T)constructor.Invoke(null);
             }
-            if (Singleton<T>.instance != null)
-            {
-                (Singleton<T>.instance as Singleton<T>).StartUp();
-            }
         }
     }
 
-    protected virtual void StartUp()
-    {
-
-    }
     public virtual void Dispose()
     {
         Singleton<T>.instance = null;

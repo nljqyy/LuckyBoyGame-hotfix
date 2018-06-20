@@ -11,14 +11,22 @@ using XLua;
 [Hotfix]
 public sealed class Zip
 {
-
-    public static void CreateZip(string sourceFilePath, string zipFilePath)
+    /// <summary>
+    /// 压缩文件
+    /// </summary>
+    /// <param name="sourceFilePath">要压缩的文件</param>
+    /// <param name="zipFilePath">压缩文件路径</param>
+    /// <returns></returns>
+    public static long CreateZip(string sourceFilePath, string zipFilePath)
     {
         ZipOutputStream zipStream = new ZipOutputStream(File.Create(zipFilePath));
         zipStream.SetLevel(6);// 压缩质量和压缩速度的平衡点
         CreateZipFiles(sourceFilePath, zipStream);
+        long size = zipStream.Length;
         zipStream.Finish();
         zipStream.Close();
+        zipStream = null;
+        return size;
     }
     private static void CreateZipFiles(string sourcePath, ZipOutputStream zipstream)
     {
@@ -46,11 +54,18 @@ public sealed class Zip
                 entry.Crc = crc.Value;
                 zipstream.PutNextEntry(entry);
                 zipstream.Write(buffer, 0, buffer.Length);
+                tempFile = null;
             }
         }
+        filesArray = null;
+        crc = null;
     }
-
-    public static IEnumerator UnZip(string file, string outPath, Action finish)
+    /// <summary>
+    /// 解压文件
+    /// </summary>
+    /// <param name="file">要解压的文件</param>
+    /// <param name="outPath">解压后输出路径</param>
+    public static void UnZip(string file, string outPath)
     {
         if (!Directory.Exists(outPath))
             Directory.CreateDirectory(outPath);
@@ -77,7 +92,9 @@ public sealed class Zip
                 try
                 {
                     if (File.Exists(filePath))
+                    {
                         File.Delete(filePath);
+                    }
                     FileStream streamWriter = File.Create(filePath);
                     int size = 2048;
                     byte[] data = new byte[size];
@@ -94,16 +111,14 @@ public sealed class Zip
                 }
                 catch (Exception ex)
                 {
-                    throw;
+                    throw ex;
                 }
             }
         }
-        Debug.Log("解压完成");
         File.Delete(file);
         s.Close();
         s.Dispose();
-        if (finish != null)
-            finish();
-        yield break;
+        s = null;
+        entry = null;
     }
 }

@@ -108,6 +108,8 @@ public class EditorTool
     [MenuItem("Tools/ExportAssetBuild")]
     static void ExportAssetBuild()
     {
+        ExportHelp.ClearConsole();
+        AssetDatabase.Refresh();
         string currentPath = Directory.GetCurrentDirectory() + "\\";
         List<AssetBundleBuild> builds = new List<AssetBundleBuild>();
         DirectoryInfo dinfo = new DirectoryInfo(needExportResPath);

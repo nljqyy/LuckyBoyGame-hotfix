@@ -34,12 +34,12 @@ public sealed class BestHttpImpl
             switch (request.State)
             {
                 case HTTPRequestStates.Processing:
-                    if (!PlayerPrefs.HasKey("DownloadLength"))
-                    {
-                        string value = response.GetFirstHeaderValue("content-length");
-                        if (!string.IsNullOrEmpty(value))
-                            PlayerPrefs.SetInt("DownloadLength", int.Parse(value));
-                    }
+                    //if (!PlayerPrefs.HasKey("DownloadLength"))
+                    //{
+                    //    string value = response.GetFirstHeaderValue("content-length");
+                    //    if (!string.IsNullOrEmpty(value))
+                    //        PlayerPrefs.SetInt("DownloadLength", int.Parse(value));
+                    //}
                     if (callback != null)
                         callback(response);
                     break;
@@ -120,7 +120,6 @@ public sealed class BestHttpImpl
         {
             request.UseStreaming = true;
             request.StreamFragmentSize = HTTPResponse.MinBufferSize;
-            PlayerPrefs.SetInt("DownloadProgress", 0);
         }
         AddHeads(request);
         AddParams(request, requestParams);

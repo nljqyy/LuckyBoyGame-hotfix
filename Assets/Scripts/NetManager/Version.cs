@@ -13,21 +13,25 @@ public sealed class Version
 
     public Version(string _version)
     {
-        string[] vers = _version.Split('.');
+        string[] vers  = _version.Split('-');
+        Content = vers[0];
+        if (vers.Length > 1)
+            ContentLength = Convert.ToUInt64(vers[1]);
+        vers = Content.Split('.');
         if (vers.Length > 1)
         {
             One = Convert.ToInt32(vers[0]);
             Two = Convert.ToInt32(vers[1]);
             Three = Convert.ToInt32(vers[2]);
         }
-        vers = _version.Split('-');
-        Content = vers[0];
-        if (vers.Length > 1)
-            ContentLength = Convert.ToUInt64(vers[1]);
     }
 
 
-
+    /// <summary>
+    /// 比较版本
+    /// </summary>
+    /// <param name="v"></param>
+    /// <returns></returns>
     public bool CompareVersion(Version v)
     {
         if (One < v.One)

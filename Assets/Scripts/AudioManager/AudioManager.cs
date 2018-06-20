@@ -14,8 +14,7 @@ public sealed class AudioManager:Singleton<AudioManager>
     private AudioSource _source;
     private CustomAudioSource _cas;
     private GameObject emitter;
-
-    protected override void StartUp()
+    private AudioManager()
     {
         GameObject audioSource = new GameObject("Audios");
         _source = audioSource.AddComponent<AudioSource>();
