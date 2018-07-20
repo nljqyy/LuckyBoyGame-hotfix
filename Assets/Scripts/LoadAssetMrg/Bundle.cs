@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using XLua;
+using System;
 
 [Hotfix]
-public sealed class Bundle  {
+public sealed class Bundle
+{
 
     private const string suffixName = ".bytes";
     public string mAssetName { get; private set; }
-    public Object mAsset { get; set; }
+    public UnityEngine.Object mAsset { get; set; }
     private AssetBundle mAssetBundle;
 
     public bool isLoaded { get; private set; }
@@ -22,18 +24,18 @@ public sealed class Bundle  {
         startLoad = true;
         userCount = 0;
     }
-    public  string CombinSuffixName()
+    public static string CombinSuffixName(string _mAssetName)
     {
-        if (!mAssetName.EndsWith(suffixName))
-            return mAssetName + suffixName;
-        return mAssetName;
+        if (!_mAssetName.EndsWith(suffixName))
+            return _mAssetName + suffixName;
+        return _mAssetName;
     }
 
-    public  string DeleteSuffixName()
+    public static string DeleteSuffixName(string _mAssetName)
     {
-        if (mAssetName.EndsWith(suffixName))
-            return mAssetName.Replace(suffixName,"");
-        return mAssetName;
+        if (_mAssetName.EndsWith(suffixName))
+            return _mAssetName.Replace(suffixName, "");
+        return _mAssetName;
     }
     public void Retain()
     {
@@ -46,20 +48,23 @@ public sealed class Bundle  {
         {
             Debug.Log("卸载资源---" + mAssetName);
             LoadAssetMrg.Instance.Remove(mAssetName);
-            Resources.UnloadAsset(mAsset as AssetBundle);
-            if (mAssetBundle != null)
-                mAssetBundle.Unload(true);
-            mAssetBundle = null;
+            if (!(mAsset is GameObject))
+                Resources.UnloadAsset(mAsset);
             mAsset = null;
+            if (mAssetBundle != null)
+            {
+                mAssetBundle.Unload(true);
+                mAssetBundle = null;
+            }
         }
     }
 
     public void GoLoad()
     {
-        string assetPath = PathHelp.GetDownLoadPath() + PathHelp.unZip + CombinSuffixName();
-        Debug.Log("加载assetbundle---"+ assetPath);
-        mAssetBundle=AssetBundle.LoadFromFile(assetPath);
-        if (mAssetBundle!=null)
+        string assetPath = PathHelp.GetDownLoadPath() + PathHelp.unZip + CombinSuffixName(mAssetName);
+        Debug.Log("加载assetbundle---" + assetPath);
+        mAssetBundle = AssetBundle.LoadFromFile(assetPath);
+        if (mAssetBundle != null)
         {
             isLoaded = true;
             if (mAssetBundle.isStreamedSceneAssetBundle)
@@ -78,13 +83,14 @@ public sealed class Bundle  {
 
     public IEnumerator GoLoadAsync()
     {
-        string assetPath = PathHelp.GetDownLoadPath() + PathHelp.unZip + CombinSuffixName();
+        string assetPath = PathHelp.GetDownLoadPath() + PathHelp.unZip + CombinSuffixName(mAssetName);
         Debug.Log("异步加载assetbundle---" + assetPath);
         AssetBundleCreateRequest abrequest = AssetBundle.LoadFromFileAsync(assetPath);
         yield return abrequest;
         if (abrequest.isDone)
         {
             mAssetBundle = abrequest.assetBundle;
+            abrequest = null;
             if (mAssetBundle != null)
             {
                 isLoaded = true;
@@ -92,7 +98,10 @@ public sealed class Bundle  {
                     mAsset = mAssetBundle.mainAsset;
                 else
                 {
-                    mAsset = mAssetBundle.LoadAsset(mAssetName);
+                    AssetBundleRequest _abr = mAssetBundle.LoadAssetAsync(mAssetName);
+                    yield return _abr;
+                    mAsset = _abr.asset;
+                    _abr = null;
                     mAssetBundle.Unload(false);
                     mAssetBundle = null;
                 }
@@ -100,6 +109,5 @@ public sealed class Bundle  {
             else
                 Debug.Log("未发现assetbundle---" + assetPath);
         }
-       
     }
 }

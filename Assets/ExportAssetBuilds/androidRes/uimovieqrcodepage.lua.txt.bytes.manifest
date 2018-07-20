@@ -1,0 +1,16 @@
+ManifestFileVersion: 0
+CRC: 2358731089
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: ae809880b80bb47dd2246c412373edd1
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 5ad585dd02dfb5016c0dad519eab8f49
+HashAppended: 0
+ClassTypes:
+- Class: 49
+  Script: {instanceID: 0}
+Assets:
+- Assets/NeedExportRes/xlua/HotFix/UIMovieQRCodePage.lua.txt
+Dependencies: []

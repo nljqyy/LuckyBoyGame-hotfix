@@ -1,0 +1,16 @@
+ManifestFileVersion: 0
+CRC: 1211087804
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 5324faa7f984f01af8755a3403381cd9
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 5ad585dd02dfb5016c0dad519eab8f49
+HashAppended: 0
+ClassTypes:
+- Class: 49
+  Script: {instanceID: 0}
+Assets:
+- Assets/NeedExportRes/xlua/HotFix/Main.lua.txt
+Dependencies: []

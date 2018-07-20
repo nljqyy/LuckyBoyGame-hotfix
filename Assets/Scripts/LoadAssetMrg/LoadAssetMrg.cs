@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using XLua;
 using System;
+using System.Linq;
 [Hotfix]
 public sealed class LoadAssetMrg :MonoSingleton<LoadAssetMrg>
 {
@@ -20,9 +21,9 @@ public sealed class LoadAssetMrg :MonoSingleton<LoadAssetMrg>
 
     public override void Dispose()
     {
-        base.Dispose();
         Disposes(true);
         System.GC.SuppressFinalize(this);
+        base.Dispose();
     }
     private void Disposes(bool dispose)
     {
@@ -40,7 +41,7 @@ public sealed class LoadAssetMrg :MonoSingleton<LoadAssetMrg>
         Disposes(false);
     }
     //获得Mainfest
-    public void GetMainfest()
+    private void GetMainfest()
     {
         string mainPath = PathHelp.GetDownLoadPath()+PathHelp.unZip + mMainfestName;
         Debug.Log("加载mainfest---"+mainPath);
@@ -58,20 +59,28 @@ public sealed class LoadAssetMrg :MonoSingleton<LoadAssetMrg>
         if (mainfest == null) return null;
         return mainfest.GetDirectDependencies(_assetName+suffixName);
     }
-    //根据依赖加载
-    private void LoadDependencies(string _assetName,bool isAysnc=false)
+    /// <summary>
+    /// 根据依赖加载
+    /// </summary>
+    /// <param name="_assetName"></param>
+    /// <param name="isAysnc">是否异步</param>
+    public string[] LoadDependencies(string _assetName)
     {
         string[] deps = GetDirectDependencies(_assetName);
-        foreach (var assetname in deps)
+        string aName = "";
+        for (int i = 0; i < deps.Length; i++)
         {
-            string aName= assetname.Replace(suffixName, "");
-            if (!isAysnc)
-                LoadAsset(aName);
-            else
-                LoadAssetAsync(aName,null);
+            aName = deps[i].Replace(suffixName, "");
+            deps[i] = aName;
         }
+        return deps;
     }
-    //加载assetbundle
+
+    /// <summary>
+    /// 同步加载assetbundle
+    /// </summary>
+    /// <param name="_assetName"></param>
+    /// <returns></returns>
     public Bundle LoadAsset(string _assetName)
     {
         if (string.IsNullOrEmpty(_assetName)) return null;
@@ -81,36 +90,56 @@ public sealed class LoadAssetMrg :MonoSingleton<LoadAssetMrg>
             bd = new Bundle(_assetName);
             bd.GoLoad();
             bundles.Add(_assetName, bd);
-            LoadDependencies(_assetName);
+            string[] _assets=LoadDependencies(_assetName);
+            for (int i = 0; i < _assets.Length; i++)
+            {
+                LoadAsset(_assets[i]);
+            }
         }
         bd.Retain();
         return bd;
     }
-
+    /// <summary>
+    /// 异步加载assetbundle
+    /// </summary>
+    /// <param name="_assetName"></param>
+    /// <param name="action"></param>
     public void LoadAssetAsync(string _assetName,Action<Bundle> action)
     {
         StartCoroutine(LoadAssetIe(_assetName,action));
     }
-    private IEnumerator LoadAssetIe(string _assetName, Action<Bundle> action)
+    public IEnumerator LoadAssetIe(string _assetName, Action<Bundle> action)
     {
         if (string.IsNullOrEmpty(_assetName)) yield break;
         Bundle bd = null;
         if (!bundles.TryGetValue(_assetName, out bd))
         {
             bd = new Bundle(_assetName);
-            yield return bd.GoLoadAsync();
             bundles.Add(_assetName, bd);
-            LoadDependencies(_assetName,true);
+            yield return bd.GoLoadAsync();
+            string[] _assets = LoadDependencies(_assetName);
+            for (int i = 0; i < _assets.Length; i++)
+            {
+                yield return LoadAssetIe(_assets[i], null);
+            }
         }
         bd.Retain();
         if (action != null)
             action(bd);
     }
+    /// <summary>
+    /// 根据assetbundle移除
+    /// </summary>
+    /// <param name="_assetName"></param>
     public void Remove(string _assetName)
     {
         if (bundles.ContainsKey(_assetName))
             bundles.Remove(_assetName);
     }
+    /// <summary>
+    /// 释放资源
+    /// </summary>
+    /// <param name="_assetName"></param>
     //释放资源
     public void ReleaseAsset(string _assetName)
     {
@@ -120,22 +149,24 @@ public sealed class LoadAssetMrg :MonoSingleton<LoadAssetMrg>
             bd.Release();
             string[] deps = GetDirectDependencies(_assetName);
             foreach (var assetname in deps)
-            {
-                ReleaseAsset(assetname);
+            {   
+                ReleaseAsset(Bundle.DeleteSuffixName(assetname));
             }
         }
     }
-   
+   /// <summary>
+   /// 释放所有资源
+   /// </summary>
     //释放所有资源
     private void ReleaseAllAsset()
     {
-        foreach (var item in bundles)
+        string[] bds=  bundles.Keys.ToArray();
+        foreach (var item in bds)
         {
-            ReleaseAsset(item.Key);
+            ReleaseAsset(item);
         }
         bundles.Clear();
         mainfest = null;
-        mMainfestBundle.Unload(true);
         AssetBundle.UnloadAllAssetBundles(true);
     }
 }

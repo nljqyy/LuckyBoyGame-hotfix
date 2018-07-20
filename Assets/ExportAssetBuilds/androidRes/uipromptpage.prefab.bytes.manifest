@@ -1,0 +1,38 @@
+ManifestFileVersion: 0
+CRC: 1662984313
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: c5e3a88f6f132844f9e26c2e79ead4e9
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: ec1b043900db1f88803d7b86e137f532
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 74
+  Script: {instanceID: 0}
+- Class: 91
+  Script: {instanceID: 0}
+- Class: 95
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: ed55525b3db37fa488f0329aada975be, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+- Class: 222
+  Script: {instanceID: 0}
+- Class: 224
+  Script: {instanceID: 0}
+- Class: 225
+  Script: {instanceID: 0}
+Assets:
+- Assets/NeedExportRes/UIPrefab/UIPromptPage.prefab
+Dependencies: []

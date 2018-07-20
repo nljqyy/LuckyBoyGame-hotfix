@@ -7,7 +7,7 @@ using DG.Tweening;
 using XLua;
 
 [Hotfix]
-public sealed class UIMovePage : UIDataBase
+public sealed class UIMovePage : UIViewBase
 {
     public const string NAME = "UIMovePage.prefab";
     public override UIShowPos ShowPos
@@ -45,21 +45,25 @@ public sealed class UIMovePage : UIDataBase
     private float[] speeds = new float[] { 400, 600, 800, 1000 };
     #endregion
 
-    protected override void Init()
+    protected override void OnInit()
     {
-        base.Init();
         modelWheel = CommTool.FindObjForName(gameObject, "wheel_img");
         parentWheel = CommTool.FindObjForName(gameObject, "grid");
         modelPang = CommTool.FindObjForName(gameObject, "pang");
         parentPang = CommTool.FindObjForName(gameObject, "xiaopang");
         Reg();
+        base.OnInit();
     }
-
-    public override void OnShow(object data)
+    public override void OnCreate()
     {
-        base.OnShow(data);
+        base.OnCreate();
         CreateGameObject();
     }
+    public override void OnEnter()
+    {
+        base.OnEnter();
+    }
+    
 
     private void Reg()
     {

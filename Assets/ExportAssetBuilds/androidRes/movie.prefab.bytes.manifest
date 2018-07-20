@@ -1,0 +1,34 @@
+ManifestFileVersion: 0
+CRC: 2947426337
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 4b67713d10a2039f63f84ebace5ea85e
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 94cf298e3e725f838e263214c208284c
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 82
+  Script: {instanceID: 0}
+- Class: 84
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: -98529514, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 222
+  Script: {instanceID: 0}
+- Class: 224
+  Script: {instanceID: 0}
+- Class: 328
+  Script: {instanceID: 0}
+- Class: 329
+  Script: {instanceID: 0}
+Assets:
+- Assets/NeedExportRes/UIPrefab/movie.prefab
+Dependencies: []

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using XLua;
 
 [Hotfix]
-public sealed class UIMessagePage : UIDataBase
+public sealed class UIMessagePage : UIViewBase
 {
     public const string NAME = "UIMessagePage.prefab";
     public override UIShowPos ShowPos
@@ -24,16 +24,16 @@ public sealed class UIMessagePage : UIDataBase
     }
 
     private Text msg;
-    protected override void Init()
+    protected override void OnInit()
     {
-        base.Init();
         msg = CommTool.GetCompentCustom<Text>(gameObject, "msg");
+        base.OnInit();
     }
-    public override void OnShow(object data)
+    public override void OnEnter()
     {
-        base.OnShow(data);
-        string content = data.ToString();
+        string content = Data.ToString();
         msg.text = content;
         SDKManager.Instance.Speak(content);
+        base.OnEnter();
     }
 }

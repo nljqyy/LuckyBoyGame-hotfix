@@ -28,7 +28,7 @@ public abstract class MonoSingleton<T> : MonoBehaviour where T:MonoSingleton<T> 
 		
 	}
 	
-	public void DisposeSelf()
+	private void DisposeSelf()
     {
         MonoSingleton<T>.instance = null;
         Destroy(gameObject);

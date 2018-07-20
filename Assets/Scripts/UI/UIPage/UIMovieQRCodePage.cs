@@ -8,7 +8,7 @@ using DG.Tweening;
 using XLua;
 
 [Hotfix]
-public sealed class UIMovieQRCodePage : UIDataBase
+public sealed class UIMovieQRCodePage : UIViewBase
 {
     public const string NAME = "UIMovieQRCodePage.prefab";
     public override UIShowPos ShowPos
@@ -34,9 +34,8 @@ public sealed class UIMovieQRCodePage : UIDataBase
     private Animator animator;
     private Image xiaoP;
     private List<ExcelTableEntity> elist;
-    protected override void Init()
+    protected override void OnInit()
     {
-        base.Init();
         qrCode = CommTool.FindObjForName(gameObject, "QR-code");
         raw = CommTool.GetCompentCustom<RawImage>(qrCode, "RawImage");
         loading = CommTool.FindObjForName(qrCode, "loading");
@@ -48,6 +47,7 @@ public sealed class UIMovieQRCodePage : UIDataBase
         animator.enabled = false;
         elist = SDKManager.Instance.GetVoiceForType(VoiceType.QRCode);
         Reg();
+        base.OnInit();
     }
     private void Reg()
     {
@@ -58,16 +58,16 @@ public sealed class UIMovieQRCodePage : UIDataBase
         EventHandler.UnRegisterEvent(EventHandlerType.QRCodeSuccess, QRCodeSuccess);
     }
 
-    public override void OnShow(object data)
+    public override void OnEnter()
     {
-        base.OnShow(data);
         qrCode.SetActive(false);
         vplayer.gameObject.SetActive(true);
         PlayMovie();
+        base.OnEnter();
     }
-    public override void OnHide()
+    public override void OnExit()
     {
-        base.OnHide();
+        base.OnExit();
         elist.Clear();
         UnReg();
     }

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using XLua;
+using System;
 [Hotfix]
 public class Loading : MonoBehaviour {
 
@@ -31,6 +32,7 @@ public class Loading : MonoBehaviour {
     }
     private void EnterGame()
     {
+        GC.Collect();
         LoadAssetMrg.Instance.LoadAssetAsync("main.unity",ab=> SceneManager.LoadSceneAsync("Main"));
     }
 }

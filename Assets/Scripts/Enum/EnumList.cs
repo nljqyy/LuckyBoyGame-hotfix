@@ -8,7 +8,6 @@ using UnityEngine;
 public enum UIShowPos
 {
     Normal,
-    Hide,
     TipTop,
 }
 

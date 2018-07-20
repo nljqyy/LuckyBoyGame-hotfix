@@ -6,7 +6,7 @@ using System;
 using XLua;
 
 [Hotfix]
-public sealed class UITimePage : UIDataBase
+public sealed class UITimePage : UIViewBase
 {
     public const string NAME = "UITimePage.prefab";
     public override UIShowPos ShowPos
@@ -36,25 +36,28 @@ public sealed class UITimePage : UIDataBase
     private List<ExcelTableEntity> elist;
     private int index = 0;
 
-    protected override void Init()
+    protected override void OnInit()
     {
-        base.Init();
         time_1 = CommTool.GetCompentCustom<Image>(gameObject, "time_1");
         time_2 = CommTool.GetCompentCustom<Image>(gameObject, "time_2");
         quxian = CommTool.GetCompentCustom<Image>(gameObject, "quxian");
         text_time = CommTool.GetCompentCustom<Text>(gameObject, "time");
         Reg();
+        base.OnInit();
         //elist = SDKManager.Instance.GetVoiceForType(VoiceType.Five);
     }
-
-
-    public override void OnShow(object data)
+    public override void OnCreate()
     {
-        base.OnShow(data);
+        base.OnCreate();
+        MyReset();
+    }
+
+    public override void OnEnter()
+    {
         //SetQuXImg();
         aciton = NormalUpdate;
-        OnInit();
         StartCoroutine(TimeUpdate());
+        base.OnEnter();
     }
     private void Reg()
     {
@@ -62,7 +65,7 @@ public sealed class UITimePage : UIDataBase
         EventHandler.RegisterEvnet(EventHandlerType.HeadPress, HeadPress);
     }
     //根据本地记录重置数据
-    private void OnInit()
+    private void MyReset()
     {
         time_ci = SDKManager.Instance.gameStatus.currentGameNumber;
         succNum = SDKManager.Instance.gameStatus.isCatch ? 1 : 0;
@@ -72,7 +75,7 @@ public sealed class UITimePage : UIDataBase
     //获得语音数据
     private List<ExcelTableEntity> GetVoiceForType(int times)
     {
-        return SDKManager.Instance.GetVoiceForType((VoiceType)(times+1));
+        return SDKManager.Instance.GetVoiceForType((VoiceType)(times + 1));
     }
     IEnumerator TimeUpdate()
     {
@@ -123,9 +126,9 @@ public sealed class UITimePage : UIDataBase
     }
     private void RestStart()
     {
-        time_ci-=1;
+        time_ci -= 1;
         SDKManager.Instance.SetCaught();
-        if (time_ci >=0)
+        if (time_ci >= 0)
         {
             //SetQuXImg();
             text_time.text = time_ci.ToString();
@@ -171,7 +174,7 @@ public sealed class UITimePage : UIDataBase
 
     IEnumerator WinPlay(CatchTy cat)
     {
-        SDKManager.Instance.gameStatus.SetGameNumber(time_ci-1);
+        SDKManager.Instance.gameStatus.SetGameNumber(time_ci - 1);
         if (cat == CatchTy.Catch)
         {
             MyFuncPerSecond func = null;
@@ -215,7 +218,7 @@ public sealed class UITimePage : UIDataBase
                     Debug.Log("已取走");
                     EffectMrg.StopPlayEffect();
                     SDKManager.Instance.WonDoll(false);
-                    EventHandler.ExcuteEvent(EventHandlerType.ClosePage, null);
+                    UIManager.Instance.ShowUI(UIPromptPage.NAME, false);
                     return true;
                 }
                 if (t == 0)
@@ -241,12 +244,12 @@ public sealed class UITimePage : UIDataBase
             int index = UnityEngine.Random.Range(0, contents.Length);
             SDKManager.Instance.Speak(contents[index]);//随机语音
             int delytime = Convert.ToInt32(elist[0].FailTime);
-            if(time_ci>0)
-               SDKManager.Instance.Light(false,5000);
+            if (time_ci > 0)
+                SDKManager.Instance.Light(false, 5000);
             else
-               SDKManager.Instance.Light(false, (delytime-1)*1000);
+                SDKManager.Instance.Light(false, (delytime - 1) * 1000);
             yield return new WaitForSeconds(delytime);
-            EventHandler.ExcuteEvent(EventHandlerType.ClosePage, null);
+            UIManager.Instance.ShowUI(UIPromptPage.NAME, false);
         }
         RestStart();
     }
