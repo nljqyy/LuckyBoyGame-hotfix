@@ -11,20 +11,32 @@ using XLua;
 public sealed class UIMovieQRCodePage : UIViewBase
 {
     public const string NAME = "UIMovieQRCodePage.prefab";
-    public override UIShowPos ShowPos
+    public override UIShowPos _showPos
     {
         get
         {
             return UIShowPos.Normal;
         }
     }
-    public override HidePage hidePage
+    public override HidePage _hidePage
     {
         get
         {
             return HidePage.Destory;
         }
     }
+
+    public MsgHandler[] msgHandlers
+    {
+        get
+        {
+            return new MsgHandler[] 
+            {
+                  new MsgHandler(EventHandlerType.QRCodeSuccess, QRCodeSuccess),
+            };
+        }
+    }
+
     private GameObject qrCode;
     private RawImage raw;
     private VideoPlayer vplayer;
@@ -36,6 +48,7 @@ public sealed class UIMovieQRCodePage : UIViewBase
     private List<ExcelTableEntity> elist;
     protected override void OnInit()
     {
+        base.OnInit();
         qrCode = CommTool.FindObjForName(gameObject, "QR-code");
         raw = CommTool.GetCompentCustom<RawImage>(qrCode, "RawImage");
         loading = CommTool.FindObjForName(qrCode, "loading");
@@ -46,20 +59,17 @@ public sealed class UIMovieQRCodePage : UIViewBase
         animator = CommTool.GetCompentCustom<Animator>(qrCode, "xiaopang");
         animator.enabled = false;
         elist = SDKManager.Instance.GetVoiceForType(VoiceType.QRCode);
-        Reg();
-        base.OnInit();
+        this.RegisterMsgEvent(new MsgHandler(EventHandlerType.QRCodeSuccess, QRCodeSuccess));
     }
-    private void Reg()
-    {
-        EventHandler.RegisterEvnet(EventHandlerType.QRCodeSuccess, QRCodeSuccess);
-    }
-    private void UnReg()
-    {
-        EventHandler.UnRegisterEvent(EventHandlerType.QRCodeSuccess, QRCodeSuccess);
-    }
+    
 
     public override void OnEnter()
     {
+        var voicelist=SDKManager.Instance.GetVoiceForType(VoiceType.Start);
+        string v = voicelist[0].TimeContent;
+        SDKManager.Instance.Speak(v);//播放载入语音
+        SDKManager.Instance.Wave(5000);
+        SDKManager.Instance.Light(false, 5000);
         qrCode.SetActive(false);
         vplayer.gameObject.SetActive(true);
         PlayMovie();
@@ -69,7 +79,6 @@ public sealed class UIMovieQRCodePage : UIViewBase
     {
         base.OnExit();
         elist.Clear();
-        UnReg();
     }
 
     void PlayMovie()
@@ -154,10 +163,14 @@ public sealed class UIMovieQRCodePage : UIViewBase
     }
 
     //二维码返回成功
-    void QRCodeSuccess(object data)
+    void QRCodeSuccess(object[] data)
     {
         loading.SetActive(false);
         raw.gameObject.SetActive(true);
         StartCoroutine(PlayVoiceIe());//二维码界面计时
+    }
+    private void OnDestroy()
+    {
+        this.UnRegisterMsgEvent();
     }
 }

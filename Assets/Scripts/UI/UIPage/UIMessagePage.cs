@@ -8,14 +8,14 @@ using XLua;
 public sealed class UIMessagePage : UIViewBase
 {
     public const string NAME = "UIMessagePage.prefab";
-    public override UIShowPos ShowPos
+    public override UIShowPos _showPos
     {
         get
         {
             return UIShowPos.TipTop;
         }
     }
-    public override HidePage hidePage
+    public override HidePage _hidePage
     {
         get
         {
@@ -26,12 +26,12 @@ public sealed class UIMessagePage : UIViewBase
     private Text msg;
     protected override void OnInit()
     {
-        msg = CommTool.GetCompentCustom<Text>(gameObject, "msg");
         base.OnInit();
+        msg = CommTool.GetCompentCustom<Text>(gameObject, "msg");
     }
     public override void OnEnter()
     {
-        string content = Data.ToString();
+        string content = _Data.ToString();
         msg.text = content;
         SDKManager.Instance.Speak(content);
         base.OnEnter();

@@ -3,13 +3,9 @@ local util=require 'util'
 xlua.private_accessible(CS.UIPromptPage)
 local log=CS.UnityEngine.Debug.Log
 
-xlua.hotfix(CS.UIPromptPage,'ClosePage',function(self,data)
-  log("Close Page---"..CS.UIPromptPage.NAME)
-  CS.UIManager.Instance:ShowUI("UIPromptPage.prefab", false);
-end)
 
-util.hotfix_ex(CS.UIPromptPage,'OnShow',function(self,data)
-  self:OnShow(data)
+util.hotfix_ex(CS.UIPromptPage,'OnEnter',function(self,data)
+  self:OnEnter()
   CS.UnityEngine.Debug.Log("OnShow Enter");
   local  o= CS.UnityEngine.GameObject("tttttttttttttttttttttt")
   o.transform:SetParent(self.transform)

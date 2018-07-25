@@ -10,20 +10,21 @@ using XLua;
 public sealed class UIMovePage : UIViewBase
 {
     public const string NAME = "UIMovePage.prefab";
-    public override UIShowPos ShowPos
+    public override UIShowPos _showPos
     {
         get
         {
             return UIShowPos.Normal;
         }
     }
-    public override HidePage hidePage
+    public override HidePage _hidePage
     {
         get
         {
             return HidePage.Destory;
         }
     }
+
     private GameObject modelWheel;
     private GameObject modelPang;
     private GameObject parentWheel;
@@ -47,14 +48,19 @@ public sealed class UIMovePage : UIViewBase
 
     protected override void OnInit()
     {
+        base.OnInit();
         modelWheel = CommTool.FindObjForName(gameObject, "wheel_img");
         parentWheel = CommTool.FindObjForName(gameObject, "grid");
         modelPang = CommTool.FindObjForName(gameObject, "pang");
         parentPang = CommTool.FindObjForName(gameObject, "xiaopang");
-        Reg();
-        base.OnInit();
+        this.RegisterMsgEvent(
+                new MsgHandler(EventHandlerType.FishHookCheck,FishHookCheck),
+                new MsgHandler(EventHandlerType.UpFinish, UpFinish),
+                new MsgHandler(EventHandlerType.RestStart, RestStart),
+                new MsgHandler(EventHandlerType.GameEnd, GameEnd)
+           );
     }
-    public override void OnCreate()
+    protected override void OnCreate()
     {
         base.OnCreate();
         CreateGameObject();
@@ -63,22 +69,15 @@ public sealed class UIMovePage : UIViewBase
     {
         base.OnEnter();
     }
-    
-
-    private void Reg()
+    public override void OnPause()
     {
-        EventHandler.RegisterEvnet(EventHandlerType.FishHookCheck, FishHookCheck);
-        EventHandler.RegisterEvnet(EventHandlerType.UpFinish, UpFinish);
-        EventHandler.RegisterEvnet(EventHandlerType.RestStart, RestStart);
-        EventHandler.RegisterEvnet(EventHandlerType.GameEnd, GameEnd);
-
+        base.OnPause();
+        Stop = true;
     }
-    private void UnReg()
+    public override void OnResume()
     {
-        EventHandler.UnRegisterEvent(EventHandlerType.FishHookCheck, FishHookCheck);
-        EventHandler.UnRegisterEvent(EventHandlerType.UpFinish, UpFinish);
-        EventHandler.UnRegisterEvent(EventHandlerType.RestStart, RestStart);
-        EventHandler.UnRegisterEvent(EventHandlerType.GameEnd, GameEnd);
+        base.OnResume();
+        Stop = false;
     }
 
     //创建物体
@@ -239,13 +238,13 @@ public sealed class UIMovePage : UIViewBase
         return sp;
     }
 
-    private void FishHookCheck(object data)
+    private void FishHookCheck(object[] data)
     {
         SDKManager.Instance.startCarwTime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss");
         bool isReach = ComputeTimes();
         foreach (var item in listPang)
         {
-            item.CheckFishHook(data, isReach);
+            item.CheckFishHook(data[0], isReach);
             if (item.catchty != CatchTy.CatchErrorPos)//抓中
             {
                 if (item.catchty == CatchTy.NoCatch)//没抓起
@@ -265,13 +264,13 @@ public sealed class UIMovePage : UIViewBase
         }
     }
 
-    private void UpFinish(object data)
+    private void UpFinish(object[] data)
     {
         CommTool.SaveIntData(CatchTimes.PlayerCatch.ToString());
-        Stop = true;
+        // Stop = true;
         GameEntity ge = listPang.Find(e => e.catchty != CatchTy.CatchErrorPos);//抓中的
         CatchTy tempCatch = ge == null ? CatchTy.CatchErrorPos : ge.catchty;
-        EventHandler.ExcuteEvent(EventHandlerType.Success, tempCatch);
+        EventHandler.ExcuteMsgEvent(EventHandlerType.Success, tempCatch);
         if (ge != null && ge.catchty == CatchTy.Catch)
         {
             tempPange.SetActive(false);
@@ -280,15 +279,15 @@ public sealed class UIMovePage : UIViewBase
         }
     }
     //重新开始
-    private void RestStart(object data)
+    private void RestStart(object[] data)
     {
-        Stop = false;
+        //Stop = false;
         listPang.ForEach(e => e.SetCaught());
     }
     //游戏结束
-    private void GameEnd(object data)
+    private void GameEnd(object[] data)
     {
-        Stop = true;
+        // Stop = true;
     }
     //计算次数 是否达到
     private bool ComputeTimes()
@@ -306,7 +305,7 @@ public sealed class UIMovePage : UIViewBase
 
     private void OnDestroy()
     {
-        UnReg();
+        this.UnRegisterMsgEvent();
         foreach (var item in list)
         {
             Destroy(item.self);

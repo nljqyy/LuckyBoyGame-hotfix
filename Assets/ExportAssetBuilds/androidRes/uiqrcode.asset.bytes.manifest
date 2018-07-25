@@ -1,0 +1,22 @@
+ManifestFileVersion: 0
+CRC: 1090273946
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: fbc6dbe15b272304bf8458d9e2d496fd
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 97a24e10e1b9d5724244f1f94af20192
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 8c42a2e691ca47c44b6ab73efafb596b, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/NeedExportRes/UIQRCode.asset
+Dependencies: []

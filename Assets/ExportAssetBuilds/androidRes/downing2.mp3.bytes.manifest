@@ -1,0 +1,16 @@
+ManifestFileVersion: 0
+CRC: 1918655441
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 3afd625c041e6490e7d7376143505b48
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 3f7d0c5e0986ec71841622bcb2f9be1c
+HashAppended: 0
+ClassTypes:
+- Class: 83
+  Script: {instanceID: 0}
+Assets:
+- Assets/NeedExportRes/Audio/downing2.mp3
+Dependencies: []

@@ -9,14 +9,14 @@ using XLua;
 public sealed class UITimePage : UIViewBase
 {
     public const string NAME = "UITimePage.prefab";
-    public override UIShowPos ShowPos
+    public override UIShowPos _showPos
     {
         get
         {
             return UIShowPos.Normal;
         }
     }
-    public override HidePage hidePage
+    public override HidePage _hidePage
     {
         get
         {
@@ -38,15 +38,18 @@ public sealed class UITimePage : UIViewBase
 
     protected override void OnInit()
     {
+        base.OnInit();
         time_1 = CommTool.GetCompentCustom<Image>(gameObject, "time_1");
         time_2 = CommTool.GetCompentCustom<Image>(gameObject, "time_2");
         quxian = CommTool.GetCompentCustom<Image>(gameObject, "quxian");
         text_time = CommTool.GetCompentCustom<Text>(gameObject, "time");
-        Reg();
-        base.OnInit();
+        this.RegisterMsgEvent(
+               new MsgHandler(EventHandlerType.Success, Success),
+               new MsgHandler(EventHandlerType.HeadPress, HeadPress)
+            );
         //elist = SDKManager.Instance.GetVoiceForType(VoiceType.Five);
     }
-    public override void OnCreate()
+    protected override void OnCreate()
     {
         base.OnCreate();
         MyReset();
@@ -59,11 +62,7 @@ public sealed class UITimePage : UIViewBase
         StartCoroutine(TimeUpdate());
         base.OnEnter();
     }
-    private void Reg()
-    {
-        EventHandler.RegisterEvnet(EventHandlerType.Success, Success);
-        EventHandler.RegisterEvnet(EventHandlerType.HeadPress, HeadPress);
-    }
+
     //根据本地记录重置数据
     private void MyReset()
     {
@@ -134,7 +133,7 @@ public sealed class UITimePage : UIViewBase
             text_time.text = time_ci.ToString();
             isUpFinish = false;
             index = 0;
-            EventHandler.ExcuteEvent(EventHandlerType.RestStart, null);
+            EventHandler.ExcuteMsgEvent(EventHandlerType.RestStart, null);
             elist = GetVoiceForType(time_ci);
             aciton = null;
             aciton = RestStartUpdate;
@@ -144,7 +143,7 @@ public sealed class UITimePage : UIViewBase
             isUpFinish = true;
             SDKManager.Instance.SetEnd();
             UIManager.Instance.ShowUI(UIPromptPage.NAME, true, CatchTy.GameEnd);
-            EventHandler.ExcuteEvent(EventHandlerType.GameEnd, null);
+            EventHandler.ExcuteMsgEvent(EventHandlerType.GameEnd, null);
             elist = SDKManager.Instance.GetVoiceForType(VoiceType.End);
             StopCoroutine(TimeUpdate());
             SDKManager.Instance.Speak(elist[0].TimeContent);
@@ -165,11 +164,11 @@ public sealed class UITimePage : UIViewBase
     /// 是否抓中
     /// </summary>
     /// <param name="data"></param>
-    private void Success(object data)
+    private void Success(object[] data)
     {
         isUpFinish = true;
-        StopCoroutine(WinPlay((CatchTy)data));
-        StartCoroutine(WinPlay((CatchTy)data));
+        StopCoroutine(WinPlay((CatchTy)data[0]));
+        StartCoroutine(WinPlay((CatchTy)data[0]));
     }
 
     IEnumerator WinPlay(CatchTy cat)
@@ -285,8 +284,13 @@ public sealed class UITimePage : UIViewBase
     }
 
     //拍头停止计时
-    private void HeadPress(object o)
+    private void HeadPress(object[] o)
     {
         isUpFinish = true;
+    }
+
+    private void OnDestroy()
+    {
+        this.UnRegisterMsgEvent();
     }
 }

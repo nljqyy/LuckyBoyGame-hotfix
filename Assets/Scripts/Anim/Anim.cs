@@ -8,7 +8,7 @@ using System;
 using XLua;
 
 [Hotfix]
-public class Anim : MonoBehaviour
+public class Anim : MonoBehaviour, IMsgEvent
 {
     [SerializeField]
     private Animator animator;
@@ -49,14 +49,18 @@ public class Anim : MonoBehaviour
     private Tweener policeTween2;
     private Dictionary<BullteType, List<BulletBomEffect>> listZidan = new Dictionary<BullteType, List<BulletBomEffect>>();
     private List<ExcelTableEntity> elist;
+
     private void Start()
     {
         Init();
-        Reg();
         SetPoliceImg(false);
         SetBgStart();
         GetTween();
         PoliceMove();
+        this.RegisterMsgEvent(
+                new MsgHandler(1, EventHandlerType.HeadPress, HeadPress),
+                new MsgHandler(1, EventHandlerType.RestStart, SetBg)
+          );
         //StartCoroutine(Shoot());
     }
     private void OnEnable()
@@ -70,15 +74,9 @@ public class Anim : MonoBehaviour
         btton.onClick.AddListener(() =>
         {
             AudioManager.Instance.PlayByName(AudioType.Fixed, AudioNams.downing2, false);
-            HeadPress(null);
+            EventHandler.ExcuteMsgEvent(EventHandlerType.HeadPress, null);
             Debug.Log("开始抓");
         });
-    }
-
-    private void Reg()
-    {
-        EventHandler.RegisterEvnet(EventHandlerType.HeadPress, HeadPress);
-        EventHandler.RegisterEvnet(EventHandlerType.RestStart, SetBg);
     }
 
     #region 背景1切换
@@ -90,7 +88,7 @@ public class Anim : MonoBehaviour
         canvasgroup = bg2.GetComponent<CanvasGroup>();
     }
 
-    private void SetBg(object o)
+    private void SetBg(object[] o)
     {
         num++;
         PoliceMove();
@@ -115,7 +113,7 @@ public class Anim : MonoBehaviour
     #region 最新动画播放
 
     //头部按下
-    private void HeadPress(object data)
+    private void HeadPress(object[] data)
     {
         Debug.Log("头部按下开始抓");
         StartCatch();
@@ -123,7 +121,7 @@ public class Anim : MonoBehaviour
 
     private void GetTween()
     {
-        catchMoveTween = transform.DOLocalMoveX(181, 2f).SetEase(Ease.Linear).SetLoops(-1,LoopType.Yoyo).Pause().SetAutoKill(false);
+        catchMoveTween = transform.DOLocalMoveX(181, 2f).SetEase(Ease.Linear).SetLoops(-1, LoopType.Yoyo).Pause().SetAutoKill(false);
         downTween = transform.DOLocalMoveY(-85, 2.5f).SetEase(Ease.Linear).Pause().SetAutoKill(false);
         upTween = transform.DOLocalMoveY(366, 3.6f).SetEase(Ease.Linear).Pause().SetAutoKill(false);
         leftTween = leftZha.DOLocalRotate(new Vector3(0, 0, 15), 0.2f).Pause().SetAutoKill(false);
@@ -138,7 +136,7 @@ public class Anim : MonoBehaviour
         downTween.Restart();
         downTween.Play().OnComplete(() =>
         {
-            EventHandler.ExcuteEvent(EventHandlerType.FishHookCheck, tran);//执行检测
+            EventHandler.ExcuteMsgEvent(EventHandlerType.FishHookCheck, tran);//执行检测
             if (SDKManager.Instance.gameXP != null)
             {
                 StartShoot(SDKManager.Instance.gameXP.catchty == CatchTy.Catch);
@@ -160,7 +158,7 @@ public class Anim : MonoBehaviour
                     leftTween.PlayBackwards();
                     rightTween.PlayBackwards();
                     ResetValue();
-                    EventHandler.ExcuteEvent(EventHandlerType.UpFinish, null);//上升完成
+                    EventHandler.ExcuteMsgEvent(EventHandlerType.UpFinish, null);//上升完成
                 });
             });
         });
@@ -341,5 +339,10 @@ public class Anim : MonoBehaviour
         }
     }
     #endregion
+
+    private void OnDestroy()
+    {
+        this.UnRegisterMsgEvent();
+    }
 
 }

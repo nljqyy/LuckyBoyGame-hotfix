@@ -7,10 +7,9 @@ using System;
 [Hotfix]
 public sealed class Bundle
 {
-
     private const string suffixName = ".bytes";
     public string mAssetName { get; private set; }
-    public UnityEngine.Object mAsset { get; set; }
+    public UnityEngine.Object mAsset { get; private set; }
     private AssetBundle mAssetBundle;
 
     public bool isLoaded { get; private set; }
@@ -24,6 +23,7 @@ public sealed class Bundle
         startLoad = true;
         userCount = 0;
     }
+    
     public static string CombinSuffixName(string _mAssetName)
     {
         if (!_mAssetName.EndsWith(suffixName))

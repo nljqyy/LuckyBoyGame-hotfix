@@ -87,8 +87,8 @@ public class SDKManager : MonoBehaviour
     private void Start()
     {
         //测试数据
-        UIManager.Instance.ShowUI(UIMovePage.NAME, true);
         UIManager.Instance.ShowUI(UITimePage.NAME, true);
+        UIManager.Instance.ShowUI(UIMovePage.NAME, true);
         //EnterGame();
     }
 
@@ -145,16 +145,17 @@ public class SDKManager : MonoBehaviour
     {
         gameStatus.SetRunStatus(GameRunStatus.QRCode);
 #if UNITY_ANDROID
-        UIManager.Instance.ShowUI(UIMovieQRCodePage.NAME, true, null, o =>
-        {
-            if (dic.ContainsKey((int)VoiceType.Start))
-            {
-                string v = dic[(int)VoiceType.Start][0].TimeContent;
-                Speak(v);//播放载入语音
-            }
-            Wave(5000);
-            Light(false, 5000);
-        });
+        UIManager.Instance.ShowUI(UIMovieQRCodePage.NAME, true, null);
+        //UIManager.Instance.ShowUI(UIMovieQRCodePage.NAME, true, null, o =>
+        //{
+        //    if (dic.ContainsKey((int)VoiceType.Start))
+        //    {
+        //        string v = dic[(int)VoiceType.Start][0].TimeContent;
+        //        Speak(v);//播放载入语音
+        //    }
+        //    Wave(5000);
+        //    Light(false, 5000);
+        //});
 #endif
     }
 
@@ -285,7 +286,7 @@ public class SDKManager : MonoBehaviour
         getCode = true;
         Debug.Log("二维码获得成功");
         QRCode.ShowCode(raw, result);
-        EventHandler.ExcuteEvent(EventHandlerType.QRCodeSuccess, null);
+        EventHandler.ExcuteMsgEvent(EventHandlerType.QRCodeSuccess, null);
         if (isOpenPay)
         {
             StartCoroutine(TimeFun(2, 2, (ref float t) =>
@@ -354,7 +355,7 @@ public class SDKManager : MonoBehaviour
         {
             isCaught = false;
             AudioManager.Instance.PlayByName(AudioType.Fixed, AudioNams.downing2, false);
-            EventHandler.ExcuteEvent(EventHandlerType.HeadPress, null);
+            EventHandler.ExcuteMsgEvent(EventHandlerType.HeadPress, null);
         }
     }
     public void SetEnd()
@@ -373,8 +374,8 @@ public class SDKManager : MonoBehaviour
         mainObj.SetActive(true);
         gameStatus.SetRunStatus(GameRunStatus.InGame);
         UIManager.Instance.ShowUI(UIMovieQRCodePage.NAME, false);
-        UIManager.Instance.ShowUI(UIMovePage.NAME, true);
         UIManager.Instance.ShowUI(UITimePage.NAME, true);
+        UIManager.Instance.ShowUI(UIMovePage.NAME, true);
         isCaught = true;//可以摸头啦
     }
 

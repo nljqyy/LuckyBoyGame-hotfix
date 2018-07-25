@@ -1,0 +1,115 @@
+ManifestFileVersion: 0
+CRC: 640835561
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: uimain.asset.bytes
+      Dependencies: {}
+    Info_1:
+      Name: uiqrcode.asset.bytes
+      Dependencies: {}
+    Info_2:
+      Name: voicenames.asset.bytes
+      Dependencies: {}
+    Info_3:
+      Name: downing.mp3.bytes
+      Dependencies: {}
+    Info_4:
+      Name: downing001.mp3.bytes
+      Dependencies: {}
+    Info_5:
+      Name: downing2.mp3.bytes
+      Dependencies: {}
+    Info_6:
+      Name: help.mp3.bytes
+      Dependencies: {}
+    Info_7:
+      Name: shengli.mp3.bytes
+      Dependencies: {}
+    Info_8:
+      Name: shibai.mp3.bytes
+      Dependencies: {}
+    Info_9:
+      Name: shoot.mp3.bytes
+      Dependencies: {}
+    Info_10:
+      Name: bom_eff.prefab.bytes
+      Dependencies: {}
+    Info_11:
+      Name: firework1.prefab.bytes
+      Dependencies: {}
+    Info_12:
+      Name: firework2.prefab.bytes
+      Dependencies: {}
+    Info_13:
+      Name: firework3.prefab.bytes
+      Dependencies: {}
+    Info_14:
+      Name: firework4.prefab.bytes
+      Dependencies: {}
+    Info_15:
+      Name: firework5.prefab.bytes
+      Dependencies: {}
+    Info_16:
+      Name: main.unity.bytes
+      Dependencies:
+        Dependency_0: firework1.prefab.bytes
+        Dependency_1: firework2.prefab.bytes
+        Dependency_2: firework3.prefab.bytes
+        Dependency_3: firework4.prefab.bytes
+        Dependency_4: debug.prefab.bytes
+        Dependency_5: fishhooknew.prefab.bytes
+    Info_17:
+      Name: debug.prefab.bytes
+      Dependencies: {}
+    Info_18:
+      Name: fishhooknew.prefab.bytes
+      Dependencies: {}
+    Info_19:
+      Name: movie.prefab.bytes
+      Dependencies: {}
+    Info_20:
+      Name: uimessagepage.prefab.bytes
+      Dependencies: {}
+    Info_21:
+      Name: uimovepage.prefab.bytes
+      Dependencies: {}
+    Info_22:
+      Name: uimovieqrcodepage.prefab.bytes
+      Dependencies: {}
+    Info_23:
+      Name: uipromptpage.prefab.bytes
+      Dependencies: {}
+    Info_24:
+      Name: uitimepage.prefab.bytes
+      Dependencies: {}
+    Info_25:
+      Name: cs_coroutine.lua.txt.bytes
+      Dependencies: {}
+    Info_26:
+      Name: helper.lua.txt.bytes
+      Dependencies: {}
+    Info_27:
+      Name: util.lua.txt.bytes
+      Dependencies: {}
+    Info_28:
+      Name: anim.lua.txt.bytes
+      Dependencies: {}
+    Info_29:
+      Name: main.lua.txt.bytes
+      Dependencies: {}
+    Info_30:
+      Name: uimovieqrcodepage.lua.txt.bytes
+      Dependencies: {}
+    Info_31:
+      Name: uipromptpage.lua.txt.bytes
+      Dependencies: {}
+    Info_32:
+      Name: uitimepage.lua.txt.bytes
+      Dependencies: {}
+    Info_33:
+      Name: memory.lua.txt.bytes
+      Dependencies: {}
+    Info_34:
+      Name: profiler.lua.txt.bytes
+      Dependencies: {}
