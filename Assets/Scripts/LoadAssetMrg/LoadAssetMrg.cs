@@ -87,14 +87,14 @@ public sealed class LoadAssetMrg : MonoSingleton<LoadAssetMrg>
         Bundle bd = null;
         if (!bundles.TryGetValue(_assetName, out bd))
         {
-            bd = new Bundle(_assetName);
-            bd.GoLoad();
-            bundles.Add(_assetName, bd);
-            string[] _assets = LoadDependencies(_assetName);
+            string[] _assets = LoadDependencies(_assetName);//先加载依赖
             for (int i = 0; i < _assets.Length; i++)
             {
                 LoadAsset(_assets[i]);
             }
+            bd = new Bundle(_assetName);
+            bd.GoLoad();
+            bundles.Add(_assetName, bd);
         }
         bd.Retain();
         return bd;
@@ -114,14 +114,14 @@ public sealed class LoadAssetMrg : MonoSingleton<LoadAssetMrg>
         Bundle bd = null;
         if (!bundles.TryGetValue(_assetName, out bd))
         {
-            bd = new Bundle(_assetName);
-            bundles.Add(_assetName, bd);
-            yield return bd.GoLoadAsync();
-            string[] _assets = LoadDependencies(_assetName);
+            string[] _assets = LoadDependencies(_assetName);//先加载依赖
             for (int i = 0; i < _assets.Length; i++)
             {
                 yield return LoadAssetIe(_assets[i], null); 
             }
+            bd = new Bundle(_assetName);
+            bundles.Add(_assetName, bd);
+            yield return bd.GoLoadAsync();
         }
         bd.Retain();
         if (action != null)

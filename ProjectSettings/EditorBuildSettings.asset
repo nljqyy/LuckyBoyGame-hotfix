@@ -11,3 +11,4 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/NeedExportRes/Scenes/Main.unity
     guid: 463305f6d2df8d041888e97967ba616b
+  m_configObjects: {}
